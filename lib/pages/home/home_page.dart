@@ -5,6 +5,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:sport_camera/pages/home/shop_page.dart';
+import 'package:sport_camera/pages/home/tutorial_page.dart';
 import 'recommend_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -42,13 +43,7 @@ class _HomePageState extends State<HomePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: TabBar(
-          controller: HomePage.tabController,
-          isScrollable: true,
-          tabs: _tabs.map((e) => Tab(text: e)).toList(),
-        ),
-      ),
+      appBar: _buildTabBarView(_tabs),
       body: ValueListenableBuilder<bool>(
         valueListenable: HomePage.allowMainScroll,
         builder: (_, allowScroll, __) {
@@ -60,13 +55,52 @@ class _HomePageState extends State<HomePage>
             children: const [
               ShopPage(),
               RecommendPage(),
-              Center(child: Text('教程页面')),
+              TutorialPage(),
             ],
           );
         },
       ),
     );
   }
+
+  PreferredSizeWidget _buildTabBarView(List<String> titles) {
+    return AppBar(
+      automaticallyImplyLeading: false,
+      backgroundColor: Colors.white,
+      elevation: 0,
+      titleSpacing: 0,
+      title: Row(
+        children: [
+          // 左侧：消息按钮
+          IconButton(
+            icon: const Icon(Icons.mail_outline, color: Colors.black),
+            onPressed: () {
+              // TODO: 消息点击事件
+            },
+          ),
+
+          // 中间：真正居中的 TabBar
+          Expanded(
+            child: Center(
+              child: TabBar(
+                controller: HomePage.tabController,
+                isScrollable: true,
+                labelColor: Colors.black,
+                unselectedLabelColor: Colors.grey,
+                indicatorColor: const Color(0xFFFFD400),
+                indicatorWeight: 3,
+                tabs: titles.map((e) => Tab(text: e)).toList(),
+              ),
+            ),
+          ),
+
+          // 右侧：占位，保证视觉居中
+          const SizedBox(width: 48),
+        ],
+      ),
+    );
+  }
+
 }
 
 

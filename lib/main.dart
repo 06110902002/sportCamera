@@ -33,7 +33,11 @@ class _MainTabPageState extends State<MainTabPage> {
 
   late final List<Widget> _pages = [
     const HomePage(),
-    const AlbumPage(),
+    const AlbumPage(
+      topTabs: ['相机文件', '已下载'],
+      subTabs: ['回忆', '全部', '收藏', '视频', '照片', '实况'],
+    )
+    ,
     const Placeholder(), // 相机
     const Placeholder(), // 剪辑
     const Placeholder(), // 我的

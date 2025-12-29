@@ -4,6 +4,7 @@ import 'package:sport_camera/pages/home/model/device_type.dart';
 import 'package:sport_camera/pages/home/recommend_tab_page.dart';
 
 import 'home_page.dart';
+import 'model/recommend_type.dart';
 
 /// Author: Rambo.Liu
 /// Date: 2025/12/25 11:33
@@ -22,13 +23,13 @@ class _RecommendPageState extends State<RecommendPage>
   late TabController _subTabController;
   String _selectedDevice = 'X系列'; // State for selected device
 
-  final List<String> _tabs = const [
-    '收藏',
-    '关注',
-    '推荐',
-    '日常',
-    '旅行',
-    '摩托车',
+  final List<RecommendType> _tabs =  [
+    RecommendType('收藏',RecommendId.like),
+    RecommendType('关注',RecommendId.like),
+    RecommendType('推荐',RecommendId.like),
+    RecommendType('日常',RecommendId.like),
+    RecommendType('旅行',RecommendId.like),
+    RecommendType('摩托车',RecommendId.like),
   ];
 
   @override
@@ -52,7 +53,7 @@ class _RecommendPageState extends State<RecommendPage>
           Expanded(
             child: TabBarView(
               controller: _subTabController,
-              children: _tabs.map(_buildContent).toList(),
+              children: _tabs.map((e) =>_buildContent(e)).toList(),
             ),
           ),
         ],
@@ -94,7 +95,7 @@ class _RecommendPageState extends State<RecommendPage>
                   .map(
                     (e) => Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
-                  child: Tab(text: e),
+                  child: Tab(text: e.name),
                 ),
               )
                   .toList(),
@@ -152,7 +153,7 @@ class _RecommendPageState extends State<RecommendPage>
 
 
   /// 内容示例
-  Widget _buildContent(String title) {
+  Widget _buildContent(RecommendType recommend) {
     return ListView.builder(
       padding: const EdgeInsets.all(12),
       itemCount: 20,
@@ -165,7 +166,7 @@ class _RecommendPageState extends State<RecommendPage>
             borderRadius: BorderRadius.circular(12),
           ),
           alignment: Alignment.center,
-          child: Text('$title - item $i'),
+          child: Text('${recommend.name} - item $i'),
         );
       },
     );
