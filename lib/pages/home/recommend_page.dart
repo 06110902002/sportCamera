@@ -45,10 +45,12 @@ class _RecommendPageState extends State<RecommendPage>
 
   @override
   Widget build(BuildContext context) {
+    final topOffset = MediaQuery.of(context).padding.top;
     return NotificationListener<OverscrollNotification>(
       onNotification: _handleOverscroll,
       child: Column(
         children: [
+          SizedBox(height: topOffset),
           _buildTopBar(context),
           Expanded(
             child: TabBarView(

@@ -24,17 +24,25 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   final List<String> _tabs = ['商城', '推荐', '教程'];
+  late int curSelectIdx;
+  late bool isPined;
 
   @override
   void initState() {
     super.initState();
+    isPined = false;
     HomePage.tabController =
         TabController(length: _tabs.length, vsync: this);
-
+    curSelectIdx = HomePage.tabController.index;
     /// 监听一级 tab 变化
     HomePage.tabController.addListener(() {
       final index = HomePage.tabController.index;
-
+      curSelectIdx = index;
+      print("38-----------index = $curSelectIdx");
+      if (!HomePage.tabController.indexIsChanging) {
+        setState(() {
+        });
+      }
       /// 只有在「推荐页」才禁用一级滑动
       HomePage.allowMainScroll.value = index != 1;
     });
@@ -43,6 +51,7 @@ class _HomePageState extends State<HomePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: curSelectIdx == 2, //页面置于教程时，将body 部分放在appBar 下方
       appBar: _buildTabBarView(_tabs),
       body: ValueListenableBuilder<bool>(
         valueListenable: HomePage.allowMainScroll,
@@ -52,10 +61,14 @@ class _HomePageState extends State<HomePage>
             physics: allowScroll
                 ? const PageScrollPhysics()
                 : const NeverScrollableScrollPhysics(),
-            children: const [
+            children:  [
               ShopPage(),
               RecommendPage(),
-              TutorialPage(),
+              TutorialPage(onScrollPinedChanged: (pined)=>{
+                setState(() {
+                  isPined = pined;
+                })
+              }),
             ],
           );
         },
@@ -66,7 +79,7 @@ class _HomePageState extends State<HomePage>
   PreferredSizeWidget _buildTabBarView(List<String> titles) {
     return AppBar(
       automaticallyImplyLeading: false,
-      backgroundColor: Colors.white,
+      backgroundColor: curSelectIdx == 2 && !isPined ? Colors.transparent:Colors.white,
       elevation: 0,
       titleSpacing: 0,
       title: Row(
@@ -102,6 +115,7 @@ class _HomePageState extends State<HomePage>
   }
 
 }
+
 
 
 

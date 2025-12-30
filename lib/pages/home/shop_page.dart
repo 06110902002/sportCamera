@@ -9,9 +9,14 @@ class ShopPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final topOffset = MediaQuery.of(context).padding.top;
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
+        //home_page.dart 中设置了extendBodyBehindAppBar: curSelectIdx == 2,
+        // 防止home_page.dart tab 切换时没有设置extendBodyBehindAppBar属于导致页面跳变的bug
+        // 用于占位
+         SizedBox(height: topOffset),
         _buildBanner(),
         const SizedBox(height: 24),
         _buildSectionTitle('消费级产品'),
