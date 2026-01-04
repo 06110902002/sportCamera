@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 
+import 'home_page.dart';
+import 'model/feed_item.dart';
+
 // Sliver 是否已经吸顶回调器
 typedef OnScrollPinedChanged = void Function(bool isPined);
 
@@ -15,7 +18,7 @@ class TutorialPage extends StatefulWidget {
 
 const double bannerHeight = 240.0;
 
-class _TutorialPageState extends State<TutorialPage> {
+class _TutorialPageState extends State<TutorialPage> with TickerProviderStateMixin {
   //列表滚动监听器
   final ScrollController _scrollController = ScrollController();
   // 用于跟踪吸顶状态，避免重复回调
@@ -26,16 +29,105 @@ class _TutorialPageState extends State<TutorialPage> {
   final TextEditingController _searchController = TextEditingController();
   // -----------------------------------------
 
+  //基础入门 tabbar
+  late TabController _basicTabController;
+  final List<String> _basicTabs = [
+    "新手入门",
+    "配件使用",
+    "云服务",
+  ];
+  final List<String> _tutorials = [
+    '从开箱到创作，快速上手第一步',
+    '从开机到成片，零基础秒懂！',
+    '拍好人像与日常，参数设置指南',
+  ];
+
+  //核心功能探索 tabbar
+  late TabController _coreTabController;
+  final List<String> _coreTabs = [
+    "拍摄玩法",
+    "剪辑使用",
+  ];
+
+  final List<FeedItem> _feedList = [
+    FeedItem(
+      imageUrl: 'https://picsum.photos/id/20/800/300',
+      title: '女友出片秘籍，拍照从此不翻车',
+      author: '@饼子Vibes',
+    ),
+    FeedItem(
+      imageUrl: 'https://picsum.photos/id/10/800/300',
+      title: '新年出大片｜最佳骑行视角',
+      author: '@乔乔行记',
+    ),
+    FeedItem(
+      imageUrl: 'https://picsum.photos/id/30/800/300',
+      title: '拍出新意｜跨年创意骑行视角',
+      author: '@蜗牛卷素材',
+    ),
+    FeedItem(
+      imageUrl: 'https://picsum.photos/id/21/800/300',
+      title: 'ND滤镜速成摩托大片',
+      author: '@虹小橙',
+    ),
+    FeedItem(
+      imageUrl: 'https://picsum.photos/id/40/800/300',
+      title: '子弹延时\n解锁冬日美景',
+      author: '@星小橙',
+    ),
+    FeedItem(
+      imageUrl: 'https://picsum.photos/id/60/800/300',
+      title: '元旦聚餐\n轻松出片',
+      author: '@饼子Vibes',
+    ),
+  ];
+  //剪辑使用
+  final List<FeedItem> _editFeedList = [
+    FeedItem(
+      imageUrl: 'https://picsum.photos/id/40/800/300',
+      title: '子弹延时\n解锁冬日美景',
+      author: '@星小橙',
+    ),
+    FeedItem(
+      imageUrl: 'https://picsum.photos/id/60/800/300',
+      title: '元旦聚餐\n轻松出片',
+      author: '@饼子Vibes',
+    ),
+  ];
+  late int coreCurSelectIdx;
+
   @override
   void initState() {
     super.initState();
     // No need to add a listener to the scroll controller for this logic
+    _basicTabController = TabController(
+      length: _basicTabs.length,
+      vsync: this,
+      initialIndex: 0,
+    );
+
+    _coreTabController = TabController(
+      length: _coreTabs.length,
+      vsync: this,
+      initialIndex: 0,
+    );
+    coreCurSelectIdx = _coreTabController.index;
+    _coreTabController.addListener((){
+      coreCurSelectIdx = _coreTabController.index;
+      print("116-----------index = $coreCurSelectIdx");
+      if (!_coreTabController.indexIsChanging) {
+          setState(() {
+      });
+    }
+    });
   }
 
   @override
   void dispose() {
     _scrollController.dispose();
     _searchController.dispose(); // Dispose the controller
+    _basicTabController.dispose();
+    _coreTabController.dispose();
     super.dispose();
   }
 
@@ -86,6 +178,14 @@ class _TutorialPageState extends State<TutorialPage> {
                   },
                 ),
               ),
+              // 2. 基础入门区域
+              SliverToBoxAdapter(
+                child: _buildBasicSection(),
+              ),
+              // 3. 核心功能探索区域（网格布局）
+              SliverToBoxAdapter(
+                child: _buildCoreSection(),
+              ),
 
               // 内容列表
               SliverList(
@@ -114,7 +214,353 @@ class _TutorialPageState extends State<TutorialPage> {
           ),
         ));
   }
+
+  Widget _buildBasicSection() {
+    return NotificationListener<OverscrollNotification>(
+      onNotification: _basicTabHandleOverscroll,
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text("基础入门", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                Text("更多 >", style: TextStyle(color: Colors.grey[500])),
+              ],
+            ),
+          ),
+          _buildBasicTabBar(context),
+          SizedBox(
+            height: 200,
+            child: TabBarView(
+              controller: _basicTabController,
+              children: _basicTabs.map((e) =>_buildBasicContent(e)).toList(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 基础入门tabbar
+  Widget _buildBasicTabBar(BuildContext context) {
+    return Container(
+      height: 30,
+      //margin: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Row(
+        children: [
+          Expanded(
+            child: TabBar(
+              controller: _basicTabController,
+              isScrollable: true,
+              labelColor: Colors.black,
+              unselectedLabelColor: Colors.grey,
+              labelStyle: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600, // 选中加粗
+              ),
+              unselectedLabelStyle: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w400,
+              ),
+              indicator: BoxDecoration(
+                borderRadius: BorderRadius.circular(25.0), // 圆角半径
+                color: Colors.yellow, // 选中标签背景颜色
+              ),// Box 设置为空可以隐藏底部横线
+
+              // indicator: const UnderlineTabIndicator(
+              //   borderSide: BorderSide(
+              //     width: 3,
+              //     color: Color(0xFFFFD400), // Insta360 黄
+              //   ),
+              //   insets: EdgeInsets.symmetric(horizontal: 18), // ⭐ 短线关键
+              // ),
+              indicatorSize: TabBarIndicatorSize.label,
+              tabs: _basicTabs
+                  .map(
+                    (e) => Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: Tab(text: e),
+                ),
+              )
+                  .toList(),
+            ),
+
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 基础入门内容示例
+  Widget _buildBasicContent(String recommend) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      child: Container(
+        clipBehavior: Clip.antiAlias,
+        decoration: BoxDecoration(
+          color: Colors.grey[200],
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: ListView.separated(
+          physics: const NeverScrollableScrollPhysics(), // 阻止ListView自身滚动
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          itemCount: _tutorials.length,
+          itemBuilder: (_, i) {
+            return ListTile(
+              onTap: ()=>{
+                print('点击教程：${_tutorials[i]}'),
+              },
+              leading: Container(
+                width: 24,
+                height: 24,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.grey[300]!),
+                ),
+                child: Icon(
+                  Icons.play_arrow,
+                  size: 16,
+                  color: Colors.blue[600],
+                ),
+              ),
+              title: Text(
+                _tutorials[i],
+                style: const TextStyle(
+                  fontSize: 15,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            );
+          },
+          separatorBuilder: (BuildContext context, int index) {
+            return Divider(
+              height: 1,
+              thickness: 1,
+              color: Colors.grey[300],
+              indent: 56, // 与标题对齐
+              endIndent: 16,
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  /// 基础tabbar 越界 → 主动切一级
+  bool _basicTabHandleOverscroll(OverscrollNotification n) {
+    final isFirst = _basicTabController.index == 0;
+    final isLast = _basicTabController.index == _basicTabs.length - 1;
+
+    if (n.overscroll < 0 && isFirst) {
+      HomePage.tabController.animateTo(1); // 推荐
+    }
+    return false;
+  }
+
+
+
+  ///构建核心操作手册
+  Widget _buildCoreSection() {
+    final currentList = coreCurSelectIdx == 0 ? _feedList : _editFeedList;
+    int grid_rows = (currentList.length / 2).ceil();
+    double sigle_row_h = 154.0;
+    return NotificationListener<OverscrollNotification>(
+      onNotification: _careTabHandleOverscroll,
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text("核心功能探索", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                Text("更多 >", style: TextStyle(color: Colors.grey[500])),
+              ],
+            ),
+          ),
+          _buildCoreTabBar(context),
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            //动态设置grid 的高度，达到自适应，外层添加动画，感受高度变化的过程
+            height: sigle_row_h * grid_rows,
+            //tabbarView 不会透传父布局约束
+            child: TabBarView(
+              controller: _coreTabController,
+              children: [
+                _buildCoreContent(_feedList),
+                _buildCoreContent(_editFeedList),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 核心tabbar
+  Widget _buildCoreTabBar(BuildContext context) {
+    return Container(
+      height: 44,
+      //margin: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Row(
+        children: [
+          Expanded(
+            child: TabBar(
+              controller: _coreTabController,
+              isScrollable: true,
+              labelColor: Colors.black,
+              unselectedLabelColor: Colors.grey,
+              labelStyle: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600, // 选中加粗
+              ),
+              unselectedLabelStyle: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w400,
+              ),
+              indicator: BoxDecoration(
+                borderRadius: BorderRadius.circular(25.0), // 圆角半径
+                color: Colors.yellow, // 选中标签背景颜色
+              ),// Box 设置为空可以隐藏底部横线
+              indicatorSize: TabBarIndicatorSize.label,
+              tabs: _coreTabs
+                  .map(
+                    (e) => Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: Tab(text: e),
+                ),
+              )
+                  .toList(),
+            ),
+
+          ),
+        ],
+      ),
+    );
+  }
+
+
+  /// 核心内容示例
+  Widget _buildCoreContent(List<FeedItem> items) {
+    return GridView.builder(
+      shrinkWrap: true,
+      padding: const EdgeInsets.all(12), // Add padding around the grid
+      physics: const NeverScrollableScrollPhysics(), // 阻止自身滚动
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2, // 2列
+        crossAxisSpacing: 10, // 列间距
+        mainAxisSpacing: 10, // 行间距
+        //在我们之前的 GridView 例子中，GridView 会根据 crossAxisCount（2 列）和 childAspectRatio（0.75）计算出每一个网格项（我们的 _FeedCard）的可用空间。
+        // 假设屏幕宽度是 400，那么每个卡片的宽度大约是 (400 - 间距) / 2，高度则由宽度乘以 0.75 得出。
+        // 这个计算出的尺寸就是父容器（GridView的网格单元）施加给子组件（_FeedCard）的最大宽度和高度
+        childAspectRatio: 1.25, // 宽高比
+      ),
+      itemCount: items.length,
+      itemBuilder: (context, index) {
+        final item = items[index];
+        return _FeedCard(item: item);
+      },
+    );
+
+  }
+
+  /// 核心tabbar 越界 → 主动切一级
+  bool _careTabHandleOverscroll(OverscrollNotification n) {
+    final isFirst = _coreTabController.index == 0;
+    final isLast = _coreTabController.index == _coreTabs.length - 1;
+
+    if (n.overscroll < 0 && isFirst) {
+      HomePage.tabController.animateTo(1); // 推荐
+    }
+    return false;
+  }
+
 }
+
+
+class _FeedCard extends StatelessWidget {
+  final FeedItem item;
+
+  const _FeedCard({required this.item});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      clipBehavior: Clip.antiAlias, // Clip content to rounded corners
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8), // Add rounded corners
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                Image.network(
+                  item.imageUrl,
+                  width: double.infinity,
+                  height: double.infinity,
+                  fit: BoxFit.cover,
+                ),
+                Positioned(
+                  left: 4,
+                  top: 4,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.5),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: const Text(
+                      '影石Insta360',
+                      style: TextStyle(color: Colors.white, fontSize: 10),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  right: 4,
+                  top: 4,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.5),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(
+                      item.author,
+                      style: const TextStyle(color: Colors.white, fontSize: 10),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+            child: Text(
+              item.title,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: Colors.black87,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+
 
 // This delegate creates the invisible placeholder with the correct height.
 class _DummyHeaderDelegate extends SliverPersistentHeaderDelegate {

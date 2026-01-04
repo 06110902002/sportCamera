@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sport_camera/pages/clip_page.dart';
 import 'pages/home/home_page.dart';
 import 'pages/album_page.dart';
 
@@ -38,7 +39,7 @@ class _MainTabPageState extends State<MainTabPage> {
       subTabs: ['回忆', '全部', '收藏', '视频', '照片', '实况'],
     )
     ,
-    const Placeholder(), // 相机
+     ClipPage(), // 相机
     const Placeholder(), // 剪辑
     const Placeholder(), // 我的
   ];

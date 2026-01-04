@@ -42,6 +42,11 @@ class _RecommendPageState extends State<RecommendPage>
       initialIndex: 2,
     );
   }
+  @override
+  void dispose() {
+    _subTabController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
