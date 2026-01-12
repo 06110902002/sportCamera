@@ -41,10 +41,7 @@ class RecommendTabPage extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 6,
-            ),
+            BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 6),
           ],
         ),
         child: Column(
@@ -59,9 +56,7 @@ class RecommendTabPage extends StatelessWidget {
                   top: Radius.circular(12),
                 ),
               ),
-              child: const Center(
-                child: Icon(Icons.image, size: 40),
-              ),
+              child: const Center(child: Icon(Icons.image, size: 40)),
             ),
             Padding(
               padding: const EdgeInsets.all(8),
@@ -81,6 +76,3 @@ class RecommendTabPage extends StatelessWidget {
     );
   }
 }
-
-
-

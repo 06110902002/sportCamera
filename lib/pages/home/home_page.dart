@@ -12,8 +12,7 @@ class HomePage extends StatefulWidget {
   static late TabController tabController;
 
   /// 是否允许一级 TabBarView 横向滑动
-  static final ValueNotifier<bool> allowMainScroll =
-  ValueNotifier<bool>(true);
+  static final ValueNotifier<bool> allowMainScroll = ValueNotifier<bool>(true);
 
   const HomePage({super.key});
 
@@ -31,18 +30,18 @@ class _HomePageState extends State<HomePage>
   void initState() {
     super.initState();
     isPined = false;
-    HomePage.tabController =
-        TabController(length: _tabs.length, vsync: this);
+    HomePage.tabController = TabController(length: _tabs.length, vsync: this);
     curSelectIdx = HomePage.tabController.index;
+
     /// 监听一级 tab 变化
     HomePage.tabController.addListener(() {
       final index = HomePage.tabController.index;
       curSelectIdx = index;
       print("38-----------index = $curSelectIdx");
       if (!HomePage.tabController.indexIsChanging) {
-        setState(() {
-        });
+        setState(() {});
       }
+
       /// 只有在「推荐页」才禁用一级滑动
       HomePage.allowMainScroll.value = index != 1;
     });
@@ -61,14 +60,16 @@ class _HomePageState extends State<HomePage>
             physics: allowScroll
                 ? const PageScrollPhysics()
                 : const NeverScrollableScrollPhysics(),
-            children:  [
+            children: [
               ShopPage(),
               RecommendPage(),
-              TutorialPage(onScrollPinedChanged: (pined)=>{
-                setState(() {
-                  isPined = pined;
-                })
-              }),
+              TutorialPage(
+                onScrollPinedChanged: (pined) => {
+                  setState(() {
+                    isPined = pined;
+                  }),
+                },
+              ),
             ],
           );
         },
@@ -79,7 +80,9 @@ class _HomePageState extends State<HomePage>
   PreferredSizeWidget _buildTabBarView(List<String> titles) {
     return AppBar(
       automaticallyImplyLeading: false,
-      backgroundColor: curSelectIdx == 2 && !isPined ? Colors.transparent:Colors.white,
+      backgroundColor: curSelectIdx == 2 && !isPined
+          ? Colors.transparent
+          : Colors.white,
       elevation: 0,
       titleSpacing: 0,
       title: Row(
@@ -113,13 +116,4 @@ class _HomePageState extends State<HomePage>
       ),
     );
   }
-
 }
-
-
-
-
-
-
-
-

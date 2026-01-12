@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:sport_camera/pages/search_page.dart';
 
 import 'home_page.dart';
 import 'model/feed_item.dart';
@@ -18,7 +19,8 @@ class TutorialPage extends StatefulWidget {
 
 const double bannerHeight = 240.0;
 
-class _TutorialPageState extends State<TutorialPage> with TickerProviderStateMixin {
+class _TutorialPageState extends State<TutorialPage>
+    with TickerProviderStateMixin {
   //列表滚动监听器
   final ScrollController _scrollController = ScrollController();
   // 用于跟踪吸顶状态，避免重复回调
@@ -31,11 +33,7 @@ class _TutorialPageState extends State<TutorialPage> with TickerProviderStateMix
 
   //基础入门 tabbar
   late TabController _basicTabController;
-  final List<String> _basicTabs = [
-    "新手入门",
-    "配件使用",
-    "云服务",
-  ];
+  final List<String> _basicTabs = ["新手入门", "配件使用", "云服务"];
   final List<String> _tutorials = [
     '从开箱到创作，快速上手第一步',
     '从开机到成片，零基础秒懂！',
@@ -44,10 +42,7 @@ class _TutorialPageState extends State<TutorialPage> with TickerProviderStateMix
 
   //核心功能探索 tabbar
   late TabController _coreTabController;
-  final List<String> _coreTabs = [
-    "拍摄玩法",
-    "剪辑使用",
-  ];
+  final List<String> _coreTabs = ["拍摄玩法", "剪辑使用"];
 
   final List<FeedItem> _feedList = [
     FeedItem(
@@ -112,13 +107,12 @@ class _TutorialPageState extends State<TutorialPage> with TickerProviderStateMix
       initialIndex: 0,
     );
     coreCurSelectIdx = _coreTabController.index;
-    _coreTabController.addListener((){
+    _coreTabController.addListener(() {
       coreCurSelectIdx = _coreTabController.index;
       print("116-----------index = $coreCurSelectIdx");
       if (!_coreTabController.indexIsChanging) {
-          setState(() {
-      });
-    }
+        setState(() {});
+      }
     });
   }
 
@@ -135,84 +129,78 @@ class _TutorialPageState extends State<TutorialPage> with TickerProviderStateMix
   Widget build(BuildContext context) {
     final topOffset = MediaQuery.of(context).padding.top;
     return NotificationListener<ScrollUpdateNotification>(
-        onNotification: (notification) {
-          // 计算当前是否应该吸顶
-          //在状态发生变化（即从“未吸顶”变为“已吸顶”，或反之）的那一刻，才触发一次回调,提升性能
-          final bool shouldBePinned = _scrollController.offset >= bannerHeight;
-          // 仅当吸顶状态发生变化时才触发回调
-          if (shouldBePinned != _isPinned) {
-            _isPinned = shouldBePinned;
-            widget.onScrollPinedChanged?.call(_isPinned);
-            print('吸顶状态改变: $_isPinned');
-          }
-          return false;
-        },
-        child: Container(
-          color: const Color(0xFFF6F7F9),
-          child: CustomScrollView(
-            controller: _scrollController,
-            slivers: [
-              // 这个占位 Sliver 的高度就等于您希望预留出的空间（即 AppBar + 状态栏的高度）。
-              SliverPersistentHeader(
-                pinned: true,
-                delegate: _DummyHeaderDelegate(height: topOffset),
-              ),
+      onNotification: (notification) {
+        // 计算当前是否应该吸顶
+        //在状态发生变化（即从“未吸顶”变为“已吸顶”，或反之）的那一刻，才触发一次回调,提升性能
+        final bool shouldBePinned = _scrollController.offset >= bannerHeight;
+        // 仅当吸顶状态发生变化时才触发回调
+        if (shouldBePinned != _isPinned) {
+          _isPinned = shouldBePinned;
+          widget.onScrollPinedChanged?.call(_isPinned);
+          print('吸顶状态改变: $_isPinned');
+        }
+        return false;
+      },
+      child: Container(
+        color: const Color(0xFFF6F7F9),
+        child: CustomScrollView(
+          controller: _scrollController,
+          slivers: [
+            // 这个占位 Sliver 的高度就等于您希望预留出的空间（即 AppBar + 状态栏的高度）。
+            SliverPersistentHeader(
+              pinned: true,
+              delegate: _DummyHeaderDelegate(height: topOffset),
+            ),
 
-              // 顶部 Banner
-              SliverToBoxAdapter(
-                child: TutorialBanner(),
-              ),
+            // 顶部 Banner
+            const SliverToBoxAdapter(child: TutorialBanner()),
 
-              // 吸顶搜索栏 (This will now stick below the dummy header)
-              SliverPersistentHeader(
-                pinned: true,
-                delegate: _SearchBarDelegate(
-                  dropdownValue: _dropdownValue,
-                  searchController: _searchController,
-                  onDropdownChanged: (newValue) {
-                    if (newValue != null) {
-                      setState(() {
-                        _dropdownValue = newValue;
-                      });
-                    }
-                  },
-                ),
+            // 吸顶搜索栏 (This will now stick below the dummy header)
+            SliverPersistentHeader(
+              pinned: true,
+              delegate: _SearchBarDelegate(
+                dropdownValue: _dropdownValue,
+                searchController: _searchController,
+                onDropdownChanged: (newValue) {
+                  if (newValue != null) {
+                    setState(() {
+                      _dropdownValue = newValue;
+                    });
+                  }
+                },
               ),
-              // 2. 基础入门区域
-              SliverToBoxAdapter(
-                child: _buildBasicSection(),
-              ),
-              // 3. 核心功能探索区域（网格布局）
-              SliverToBoxAdapter(
-                child: _buildCoreSection(),
-              ),
+            ),
+            // 2. 基础入门区域
+            SliverToBoxAdapter(child: _buildBasicSection()),
+            // 3. 核心功能探索区域（网格布局）
+            SliverToBoxAdapter(child: _buildCoreSection()),
 
-              // 内容列表
-              SliverList(
-                delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                    return Container(
-                      height: 120,
-                      margin:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      padding: const EdgeInsets.all(16),
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        '教程内容 Item $index',
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                    );
-                  },
-                  childCount: 20,
-                ),
-              ),
-            ],
-          ),
-        ));
+            // 内容列表
+            SliverList(
+              delegate: SliverChildBuilderDelegate((context, index) {
+                return Container(
+                  height: 120,
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  padding: const EdgeInsets.all(16),
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    '教程内容 Item $index',
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                );
+              }, childCount: 20),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildBasicSection() {
@@ -221,11 +209,17 @@ class _TutorialPageState extends State<TutorialPage> with TickerProviderStateMix
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16.0,
+              vertical: 16.0,
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text("基础入门", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                const Text(
+                  "基础入门",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
                 Text("更多 >", style: TextStyle(color: Colors.grey[500])),
               ],
             ),
@@ -235,7 +229,7 @@ class _TutorialPageState extends State<TutorialPage> with TickerProviderStateMix
             height: 200,
             child: TabBarView(
               controller: _basicTabController,
-              children: _basicTabs.map((e) =>_buildBasicContent(e)).toList(),
+              children: _basicTabs.map((e) => _buildBasicContent(e)).toList(),
             ),
           ),
         ],
@@ -267,8 +261,7 @@ class _TutorialPageState extends State<TutorialPage> with TickerProviderStateMix
               indicator: BoxDecoration(
                 borderRadius: BorderRadius.circular(25.0), // 圆角半径
                 color: Colors.yellow, // 选中标签背景颜色
-              ),// Box 设置为空可以隐藏底部横线
-
+              ), // Box 设置为空可以隐藏底部横线
               // indicator: const UnderlineTabIndicator(
               //   borderSide: BorderSide(
               //     width: 3,
@@ -280,13 +273,12 @@ class _TutorialPageState extends State<TutorialPage> with TickerProviderStateMix
               tabs: _basicTabs
                   .map(
                     (e) => Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  child: Tab(text: e),
-                ),
-              )
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: Tab(text: e),
+                    ),
+                  )
                   .toList(),
             ),
-
           ),
         ],
       ),
@@ -309,9 +301,7 @@ class _TutorialPageState extends State<TutorialPage> with TickerProviderStateMix
           itemCount: _tutorials.length,
           itemBuilder: (_, i) {
             return ListTile(
-              onTap: ()=>{
-                print('点击教程：${_tutorials[i]}'),
-              },
+              onTap: () => {print('点击教程：${_tutorials[i]}')},
               leading: Container(
                 width: 24,
                 height: 24,
@@ -361,8 +351,6 @@ class _TutorialPageState extends State<TutorialPage> with TickerProviderStateMix
     return false;
   }
 
-
-
   ///构建核心操作手册
   Widget _buildCoreSection() {
     final currentList = coreCurSelectIdx == 0 ? _feedList : _editFeedList;
@@ -373,11 +361,17 @@ class _TutorialPageState extends State<TutorialPage> with TickerProviderStateMix
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16.0,
+              vertical: 16.0,
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text("核心功能探索", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                const Text(
+                  "核心功能探索",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
                 Text("更多 >", style: TextStyle(color: Colors.grey[500])),
               ],
             ),
@@ -425,24 +419,22 @@ class _TutorialPageState extends State<TutorialPage> with TickerProviderStateMix
               indicator: BoxDecoration(
                 borderRadius: BorderRadius.circular(25.0), // 圆角半径
                 color: Colors.yellow, // 选中标签背景颜色
-              ),// Box 设置为空可以隐藏底部横线
+              ), // Box 设置为空可以隐藏底部横线
               indicatorSize: TabBarIndicatorSize.label,
               tabs: _coreTabs
                   .map(
                     (e) => Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  child: Tab(text: e),
-                ),
-              )
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: Tab(text: e),
+                    ),
+                  )
                   .toList(),
             ),
-
           ),
         ],
       ),
     );
   }
-
 
   /// 核心内容示例
   Widget _buildCoreContent(List<FeedItem> items) {
@@ -465,7 +457,6 @@ class _TutorialPageState extends State<TutorialPage> with TickerProviderStateMix
         return _FeedCard(item: item);
       },
     );
-
   }
 
   /// 核心tabbar 越界 → 主动切一级
@@ -478,9 +469,7 @@ class _TutorialPageState extends State<TutorialPage> with TickerProviderStateMix
     }
     return false;
   }
-
 }
-
 
 class _FeedCard extends StatelessWidget {
   final FeedItem item;
@@ -512,7 +501,10 @@ class _FeedCard extends StatelessWidget {
                   left: 4,
                   top: 4,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 4,
+                      vertical: 2,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.black.withOpacity(0.5),
                       borderRadius: BorderRadius.circular(4),
@@ -527,7 +519,10 @@ class _FeedCard extends StatelessWidget {
                   right: 4,
                   top: 4,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 4,
+                      vertical: 2,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.black.withOpacity(0.5),
                       borderRadius: BorderRadius.circular(4),
@@ -560,8 +555,6 @@ class _FeedCard extends StatelessWidget {
   }
 }
 
-
-
 // This delegate creates the invisible placeholder with the correct height.
 class _DummyHeaderDelegate extends SliverPersistentHeaderDelegate {
   final double height;
@@ -576,7 +569,10 @@ class _DummyHeaderDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
     return Container(height: height);
   }
 
@@ -609,7 +605,10 @@ class _SearchBarDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
     return Container(
       color: const Color(0xFFF6F7F9),
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
@@ -619,27 +618,40 @@ class _SearchBarDelegate extends SliverPersistentHeaderDelegate {
           DropdownButton<String>(
             value: dropdownValue,
             items: ["X4 Air", "X3", "One X3"].map((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
+              return DropdownMenuItem<String>(value: value, child: Text(value));
             }).toList(),
             onChanged: onDropdownChanged,
             underline: const SizedBox.shrink(), // 隐藏下拉线
-            icon: Icon(Icons.arrow_drop_down, size: 20, color: Colors.grey[600]),
+            icon: Icon(
+              Icons.arrow_drop_down,
+              size: 20,
+              color: Colors.grey[600],
+            ),
             style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: Colors.black),
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
           ),
           const SizedBox(width: 8),
           Expanded(
             child: TextField(
               controller: searchController,
+              readOnly: true, // 设置为只读，防止弹出键盘
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SearchPage()),
+                );
+              },
               decoration: InputDecoration(
                 hintText: '搜索教程',
                 hintStyle: TextStyle(color: Colors.grey[400]),
-                prefixIcon: Icon(Icons.search, size: 20, color: Colors.grey[500]),
+                prefixIcon: Icon(
+                  Icons.search,
+                  size: 20,
+                  color: Colors.grey[500],
+                ),
                 filled: true,
                 fillColor: Colors.white,
                 contentPadding: EdgeInsets.zero,
@@ -829,10 +841,7 @@ class _BannerItem extends StatelessWidget {
           padding: const EdgeInsets.all(20),
           child: const Text(
             'Insta360 教程\n素材画面调节指南',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
         ),
       ),

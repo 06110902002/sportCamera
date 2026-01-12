@@ -1,4 +1,3 @@
-
 /// Author: Rambo.Liu
 /// Date: 2025/12/25 11:21
 /// @Copyright by JYXC Since 2023
@@ -17,11 +16,7 @@ class FilterType {
 }
 
 class AlbumPage extends StatefulWidget {
-  const AlbumPage({
-    super.key,
-    required this.topTabs,
-    required this.subTabs,
-  });
+  const AlbumPage({super.key, required this.topTabs, required this.subTabs});
 
   /// 顶部一级 Tab（如：相机文件 / 已下载）
   final List<String> topTabs;
@@ -33,8 +28,7 @@ class AlbumPage extends StatefulWidget {
   State<AlbumPage> createState() => _AlbumPageState();
 }
 
-class _AlbumPageState extends State<AlbumPage>
-    with TickerProviderStateMixin {
+class _AlbumPageState extends State<AlbumPage> with TickerProviderStateMixin {
   late TabController _topTabController;
   late TabController _subTabController;
   late List<AlbumData> _albumDataList;
@@ -48,30 +42,28 @@ class _AlbumPageState extends State<AlbumPage>
   @override
   void initState() {
     super.initState();
-    _topTabController =
-        TabController(
-            length: widget.topTabs.length,
-            vsync: this,
-            initialIndex: 1
-        );
+    _topTabController = TabController(
+      length: widget.topTabs.length,
+      vsync: this,
+      initialIndex: 1,
+    );
     // Add a listener to rebuild the UI when the top tab changes.
-    _topTabController.addListener((){
-      if(!_topTabController.indexIsChanging) {
+    _topTabController.addListener(() {
+      if (!_topTabController.indexIsChanging) {
         _closeFilterPanel();
         setState(() {});
       }
     });
 
-    _subTabController =
-        TabController(
-            length: widget.subTabs.length,
-            vsync: this,
-            initialIndex: 1
-        );
+    _subTabController = TabController(
+      length: widget.subTabs.length,
+      vsync: this,
+      initialIndex: 1,
+    );
 
     // Rebuild when sub-tab changes to update content.
     _subTabController.addListener(() {
-      if(!_subTabController.indexIsChanging) {
+      if (!_subTabController.indexIsChanging) {
         _closeFilterPanel();
         setState(() {});
       }
@@ -81,87 +73,87 @@ class _AlbumPageState extends State<AlbumPage>
     _albumDataList = [
       //相机-回忆文件
       AlbumData(
-          albumType: AlbumType.camera,
-          secondType: AlbumSecondType.memory,
-          title: "相机-回忆-1",
-          imageUrl: "assets/imgs/seu.jpg"
+        albumType: AlbumType.camera,
+        secondType: AlbumSecondType.memory,
+        title: "相机-回忆-1",
+        imageUrl: "assets/imgs/seu.jpg",
       ),
       AlbumData(
-          albumType: AlbumType.camera,
-          secondType: AlbumSecondType.memory,
-          title: "相机-回忆-2",
-          imageUrl: "assets/imgs/seu.jpg"
+        albumType: AlbumType.camera,
+        secondType: AlbumSecondType.memory,
+        title: "相机-回忆-2",
+        imageUrl: "assets/imgs/seu.jpg",
       ),
       //相机-照片文件
       AlbumData(
-          albumType: AlbumType.camera,
-          secondType: AlbumSecondType.photo,
-          title: "相机-照片-1",
-          imageUrl: "assets/imgs/seu.jpg"
+        albumType: AlbumType.camera,
+        secondType: AlbumSecondType.photo,
+        title: "相机-照片-1",
+        imageUrl: "assets/imgs/seu.jpg",
       ),
       //相机-实况照片文件
       AlbumData(
-          albumType: AlbumType.camera,
-          secondType: AlbumSecondType.livePhoto,
-          title: "相机-实况-1",
-          imageUrl: "assets/imgs/seu.jpg"
+        albumType: AlbumType.camera,
+        secondType: AlbumSecondType.livePhoto,
+        title: "相机-实况-1",
+        imageUrl: "assets/imgs/seu.jpg",
       ),
       //相机-全部
       AlbumData(
-          albumType: AlbumType.camera,
-          secondType: AlbumSecondType.all,
-          title: "相机-全部-1",
-          imageUrl: "assets/imgs/seu.jpg"
+        albumType: AlbumType.camera,
+        secondType: AlbumSecondType.all,
+        title: "相机-全部-1",
+        imageUrl: "assets/imgs/seu.jpg",
       ),
       AlbumData(
-          albumType: AlbumType.camera,
-          secondType: AlbumSecondType.all,
-          title: "相机-全部-2",
-          imageUrl: "assets/imgs/seu.jpg"
+        albumType: AlbumType.camera,
+        secondType: AlbumSecondType.all,
+        title: "相机-全部-2",
+        imageUrl: "assets/imgs/seu.jpg",
       ),
       AlbumData(
-          albumType: AlbumType.camera,
-          secondType: AlbumSecondType.all,
-          title: "相机-全部-3",
-          imageUrl: "assets/imgs/seu.jpg"
+        albumType: AlbumType.camera,
+        secondType: AlbumSecondType.all,
+        title: "相机-全部-3",
+        imageUrl: "assets/imgs/seu.jpg",
       ),
       AlbumData(
-          albumType: AlbumType.camera,
-          secondType: AlbumSecondType.all,
-          title: "相机-全部-4",
-          imageUrl: "assets/imgs/seu.jpg"
+        albumType: AlbumType.camera,
+        secondType: AlbumSecondType.all,
+        title: "相机-全部-4",
+        imageUrl: "assets/imgs/seu.jpg",
       ),
       AlbumData(
-          albumType: AlbumType.camera,
-          secondType: AlbumSecondType.all,
-          title: "相机-全部-5",
-          imageUrl: "assets/imgs/seu.jpg"
+        albumType: AlbumType.camera,
+        secondType: AlbumSecondType.all,
+        title: "相机-全部-5",
+        imageUrl: "assets/imgs/seu.jpg",
       ),
       AlbumData(
-          albumType: AlbumType.camera,
-          secondType: AlbumSecondType.all,
-          title: "相机-全部-6",
-          imageUrl: "assets/imgs/seu.jpg"
+        albumType: AlbumType.camera,
+        secondType: AlbumSecondType.all,
+        title: "相机-全部-6",
+        imageUrl: "assets/imgs/seu.jpg",
       ),
       //已下载-回忆
       AlbumData(
-          albumType: AlbumType.download,
-          secondType: AlbumSecondType.memory,
-          title: "下载-回忆-1",
-          imageUrl: "assets/imgs/seu.jpg"
+        albumType: AlbumType.download,
+        secondType: AlbumSecondType.memory,
+        title: "下载-回忆-1",
+        imageUrl: "assets/imgs/seu.jpg",
       ),
       //已下载-all
       AlbumData(
-          albumType: AlbumType.download,
-          secondType: AlbumSecondType.all,
-          title: "下载-全部-1",
-          imageUrl: "assets/imgs/tianmao.jpg"
+        albumType: AlbumType.download,
+        secondType: AlbumSecondType.all,
+        title: "下载-全部-1",
+        imageUrl: "assets/imgs/tianmao.jpg",
       ),
       AlbumData(
-          albumType: AlbumType.download,
-          secondType: AlbumSecondType.all,
-          title: "下载-全部-2",
-          imageUrl: "assets/imgs/tianmao.jpg"
+        albumType: AlbumType.download,
+        secondType: AlbumSecondType.all,
+        title: "下载-全部-2",
+        imageUrl: "assets/imgs/tianmao.jpg",
       ),
     ];
 
@@ -220,7 +212,7 @@ class _AlbumPageState extends State<AlbumPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _isFilterPanelVisible?Color(0xFF2C2C2C): Colors.black,
+      backgroundColor: _isFilterPanelVisible ? Color(0xFF2C2C2C) : Colors.black,
       // body: SafeArea(
       //   bottom: false,
       //   child: Column(
@@ -233,30 +225,30 @@ class _AlbumPageState extends State<AlbumPage>
       // ),
       body: SafeArea(
         bottom: false,
-        child:Stack(
-            children: [
-              Column(
-                  children:[
-                    _buildTopTabBar(),
-                    _buildSubTabBar(),
-                    Expanded(child: _buildContent()),
-                  ]),
+        child: Stack(
+          children: [
+            Column(
+              children: [
+                _buildTopTabBar(),
+                _buildSubTabBar(),
+                Expanded(child: _buildContent()),
+              ],
+            ),
 
-              // 外部点击遮罩
-              if (_isFilterPanelVisible)
-                GestureDetector(
-                  onTap: _closeFilterPanel,
-                  child: Container(
-                    color: Colors.grey,
-                    margin: EdgeInsets.only(top: topBarH + subBarH + 320),
-                  ),
+            // 外部点击遮罩
+            if (_isFilterPanelVisible)
+              GestureDetector(
+                onTap: _closeFilterPanel,
+                child: Container(
+                  color: Colors.grey,
+                  margin: EdgeInsets.only(top: topBarH + subBarH + 320),
                 ),
-              // 浮动筛选面板
-              _buildFilterPanel(),
-            ]
+              ),
+            // 浮动筛选面板
+            _buildFilterPanel(),
+          ],
         ),
-      )
-
+      ),
     );
   }
 
@@ -278,9 +270,7 @@ class _AlbumPageState extends State<AlbumPage>
               indicator: const BoxDecoration(),
               labelColor: Colors.white,
               unselectedLabelColor: Colors.grey,
-              tabs: widget.topTabs
-                  .map((e) => Tab(text: e))
-                  .toList(),
+              tabs: widget.topTabs.map((e) => Tab(text: e)).toList(),
             ),
           ),
           IconButton(
@@ -288,8 +278,7 @@ class _AlbumPageState extends State<AlbumPage>
             onPressed: () {},
           ),
           IconButton(
-            icon: const Icon(Icons.check_circle_outline,
-                color: Colors.grey),
+            icon: const Icon(Icons.check_circle_outline, color: Colors.grey),
             onPressed: () {},
           ),
         ],
@@ -318,9 +307,9 @@ class _AlbumPageState extends State<AlbumPage>
               labelColor: Colors.white,
               unselectedLabelColor: Colors.grey,
               tabs: widget.subTabs.map((e) => Tab(text: e)).toList(),
-            )
+            ),
           ),
-          const SizedBox(width:20),
+          const SizedBox(width: 20),
           IconButton(
             icon: const Icon(Icons.swap_vert, color: Colors.white),
             onPressed: () {
@@ -328,9 +317,10 @@ class _AlbumPageState extends State<AlbumPage>
             },
           ),
         ],
-      )
+      ),
     );
   }
+
   /// ===============================
   /// 内容区（与二级 TabBar 联动）
   /// ===============================
@@ -345,7 +335,8 @@ class _AlbumPageState extends State<AlbumPage>
         final topIndex = _topTabController.index;
 
         final filteredList = _albumDataList.where((data) {
-          return data.albumType.value == topIndex && data.secondType.value == subIndex;
+          return data.albumType.value == topIndex &&
+              data.secondType.value == subIndex;
         }).toList();
 
         return _buildContentList(filteredList);
@@ -379,10 +370,7 @@ class _AlbumPageState extends State<AlbumPage>
   }
 
   /// Builds a single item for the GridView.
-  Widget _buildAlbumItem({
-    required String title,
-    required String imgUrl,
-  }) {
+  Widget _buildAlbumItem({required String title, required String imgUrl}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -399,10 +387,14 @@ class _AlbumPageState extends State<AlbumPage>
                     fit: BoxFit.cover,
                     // Show an error icon if the asset is not found
                     errorBuilder: (context, error, stackTrace) {
-                      return const Center(child: Icon(Icons.error, color: Colors.grey));
+                      return const Center(
+                        child: Icon(Icons.error, color: Colors.grey),
+                      );
                     },
                   )
-                : const Center(child: Icon(Icons.image_not_supported, color: Colors.grey)),
+                : const Center(
+                    child: Icon(Icons.image_not_supported, color: Colors.grey),
+                  ),
           ),
         ),
         const SizedBox(height: 8),
@@ -430,13 +422,16 @@ class _AlbumPageState extends State<AlbumPage>
         height: _panelHeight,
         decoration: const BoxDecoration(
           color: Color(0xFF2C2C2C),
-          borderRadius: BorderRadius.only(bottomLeft: Radius.circular(8),bottomRight: Radius.circular(8)),
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(8),
+            bottomRight: Radius.circular(8),
+          ),
           boxShadow: [
             BoxShadow(
               color: Colors.black12,
               blurRadius: 8,
               offset: Offset(0, 2),
-            )
+            ),
           ],
         ),
 
@@ -492,38 +487,43 @@ class _AlbumPageState extends State<AlbumPage>
               style: TextStyle(color: Colors.grey, fontSize: 14, height: 1.2),
             ),
             const SizedBox(height: 14),
-            Wrap(spacing: 8, runSpacing: 8, children: [
-              // 动态生成：用唯一标识（id），而非文本
-              if(curSubIdx == AlbumSecondType.all.value || curSubIdx == AlbumSecondType.like.value)
-                for(var enrty in _filterOptions.entries)
-                  if(enrty.key == AlbumSecondType.video.value ||
-                      enrty.key == AlbumSecondType.photo.value ||
-                      enrty.key == AlbumSecondType.livePhoto.value)
-                    CheckBoxButton<int>(
-                      value: enrty.key,
-                      label: enrty.value, // 动态展示文本（可来自网络）
-                      initialValue: _filterStates[enrty.key] ?? false,
-                      onChanged: (data) {
-                        setState(() {
-                          _filterStates[data.value] = data.isSelected;
-                        });
-                      },
-                    ),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                // 动态生成：用唯一标识（id），而非文本
+                if (curSubIdx == AlbumSecondType.all.value ||
+                    curSubIdx == AlbumSecondType.like.value)
+                  for (var enrty in _filterOptions.entries)
+                    if (enrty.key == AlbumSecondType.video.value ||
+                        enrty.key == AlbumSecondType.photo.value ||
+                        enrty.key == AlbumSecondType.livePhoto.value)
+                      CheckBoxButton<int>(
+                        value: enrty.key,
+                        label: enrty.value, // 动态展示文本（可来自网络）
+                        initialValue: _filterStates[enrty.key] ?? false,
+                        onChanged: (data) {
+                          setState(() {
+                            _filterStates[data.value] = data.isSelected;
+                          });
+                        },
+                      ),
 
-              if(curSubIdx == AlbumSecondType.video.value || curSubIdx == AlbumSecondType.photo.value || curSubIdx == AlbumSecondType.livePhoto.value)
-                CheckBoxButton<int>(
-                  value: curSubIdx,
-                  label: _filterOptions[curSubIdx]!,
-                  initialValue: _filterStates[curSubIdx] ?? false,
-                  onChanged: (data) {
-                    setState(() {
-                      _filterStates[data.value] = data.isSelected;
-                    });
-                  },
-                )
-
-
-            ]),
+                if (curSubIdx == AlbumSecondType.video.value ||
+                    curSubIdx == AlbumSecondType.photo.value ||
+                    curSubIdx == AlbumSecondType.livePhoto.value)
+                  CheckBoxButton<int>(
+                    value: curSubIdx,
+                    label: _filterOptions[curSubIdx]!,
+                    initialValue: _filterStates[curSubIdx] ?? false,
+                    onChanged: (data) {
+                      setState(() {
+                        _filterStates[data.value] = data.isSelected;
+                      });
+                    },
+                  ),
+              ],
+            ),
 
             // 2. 视角类型筛选
             const SizedBox(height: 14),
@@ -532,20 +532,25 @@ class _AlbumPageState extends State<AlbumPage>
               style: TextStyle(color: Colors.grey, fontSize: 14, height: 1.2),
             ),
             const SizedBox(height: 14),
-            Wrap(spacing: 8, runSpacing: 8, children: [
-              for (var enrty in _filterOptions.entries)
-                if(enrty.key == AlbumSecondType.panoramic.value || enrty.key == AlbumSecondType.plat.value)
-                  CheckBoxButton<int>(
-                    value: enrty.key,
-                    label: enrty.value,
-                    initialValue: _filterStates[enrty.key] ?? false,
-                    onChanged: (data) {
-                      setState(() {
-                        _filterStates[data.value] = data.isSelected;
-                      });
-                    },
-                  ),
-            ]),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                for (var enrty in _filterOptions.entries)
+                  if (enrty.key == AlbumSecondType.panoramic.value ||
+                      enrty.key == AlbumSecondType.plat.value)
+                    CheckBoxButton<int>(
+                      value: enrty.key,
+                      label: enrty.value,
+                      initialValue: _filterStates[enrty.key] ?? false,
+                      onChanged: (data) {
+                        setState(() {
+                          _filterStates[data.value] = data.isSelected;
+                        });
+                      },
+                    ),
+              ],
+            ),
 
             // 3. 收藏与标记筛选
             const SizedBox(height: 14),
@@ -554,21 +559,25 @@ class _AlbumPageState extends State<AlbumPage>
               style: TextStyle(color: Colors.grey, fontSize: 14, height: 1.2),
             ),
             const SizedBox(height: 14),
-            Wrap(spacing: 8, runSpacing: 8, children: [
-              for (var enrty in _filterOptions.entries)
-                if(enrty.key == AlbumSecondType.like.value ||
-                    enrty.key == AlbumSecondType.mark.value)
-                  CheckBoxButton<int>(
-                    value: enrty.key,
-                    label: enrty.value,
-                    initialValue: _filterStates[enrty.key] ?? false,
-                    onChanged: (data) {
-                      setState(() {
-                        _filterStates[data.value] = data.isSelected;
-                      });
-                    },
-                  ),
-            ]),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                for (var enrty in _filterOptions.entries)
+                  if (enrty.key == AlbumSecondType.like.value ||
+                      enrty.key == AlbumSecondType.mark.value)
+                    CheckBoxButton<int>(
+                      value: enrty.key,
+                      label: enrty.value,
+                      initialValue: _filterStates[enrty.key] ?? false,
+                      onChanged: (data) {
+                        setState(() {
+                          _filterStates[data.value] = data.isSelected;
+                        });
+                      },
+                    ),
+              ],
+            ),
 
             // 4. 底部操作按钮
             const SizedBox(height: 14),
@@ -595,7 +604,7 @@ class _AlbumPageState extends State<AlbumPage>
                 const SizedBox(width: 16),
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: (){
+                    onPressed: () {
                       // 业务逻辑：传唯一标识（id）给后端，而非文本
                       print("选中的筛选条件ID：${_getSelectedFilterIds()}");
                       // 仅展示用：根据ID匹配动态文本
@@ -630,20 +639,13 @@ class _AlbumPageState extends State<AlbumPage>
       style: ElevatedButton.styleFrom(
         backgroundColor: const Color(0xFF4A4A4A),
         foregroundColor: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
         minimumSize: const Size(70, 30),
       ),
-      child: Text(
-        text,
-        style: const TextStyle(fontSize: 12),
-      ),
+      child: Text(text, style: const TextStyle(fontSize: 12)),
     );
   }
-
-
 
   /// ===============================
   /// 空状态（占位）
@@ -653,13 +655,9 @@ class _AlbumPageState extends State<AlbumPage>
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: const [
-          Icon(Icons.inventory_2_outlined,
-              size: 64, color: Colors.grey),
+          Icon(Icons.inventory_2_outlined, size: 64, color: Colors.grey),
           SizedBox(height: 12),
-          Text(
-            '还没有内容',
-            style: TextStyle(color: Colors.grey),
-          ),
+          Text('还没有内容', style: TextStyle(color: Colors.grey)),
         ],
       ),
     );

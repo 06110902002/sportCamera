@@ -27,8 +27,17 @@ class _TutorialPageState extends State<TutorialPage> {
   final ScrollController _listScrollController = ScrollController();
 
   final List<String> tabTitles = [
-    '新手必看', '配件使用', '云服务', '拍摄技巧', '剪辑教程',
-    '固件升级', '创意玩法', '故障排查', '社区分享', '高级调色', '延时摄影'
+    '新手必看',
+    '配件使用',
+    '云服务',
+    '拍摄技巧',
+    '剪辑教程',
+    '固件升级',
+    '创意玩法',
+    '故障排查',
+    '社区分享',
+    '高级调色',
+    '延时摄影',
   ];
 
   final List<GlobalKey> _tabKeys = [];
@@ -109,8 +118,14 @@ class _TutorialPageState extends State<TutorialPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("基础入门", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                Text("更多 >", style: TextStyle(color: Colors.grey[500], fontSize: 14)),
+                Text(
+                  "基础入门",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  "更多 >",
+                  style: TextStyle(color: Colors.grey[500], fontSize: 14),
+                ),
               ],
             ),
           ),
@@ -171,7 +186,10 @@ class _TutorialPageState extends State<TutorialPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          Text(
+            title,
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
           SizedBox(height: 12),
           Container(
             decoration: BoxDecoration(
@@ -180,10 +198,7 @@ class _TutorialPageState extends State<TutorialPage> {
             ),
             padding: EdgeInsets.all(16),
             child: Column(
-              children: List.generate(
-                5,
-                    (i) => _buildListItem("示例视频 $i"),
-              ),
+              children: List.generate(5, (i) => _buildListItem("示例视频 $i")),
             ),
           ),
         ],

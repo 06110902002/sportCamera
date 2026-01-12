@@ -15,32 +15,31 @@ enum AlbumType {
 
 /// 相机文件 二级类型
 enum AlbumSecondType {
-  memory(0,"回忆"),
-  all(1,"全部"),
-  like(2,"收藏"),
-  video(3,"视频"),
-  photo(4,"照片"),
-  livePhoto(5,"实况"),
-  panoramic(6,"全景"),
-  plat(7,"平面"),
-  mark(8,"标记");
+  memory(0, "回忆"),
+  all(1, "全部"),
+  like(2, "收藏"),
+  video(3, "视频"),
+  photo(4, "照片"),
+  livePhoto(5, "实况"),
+  panoramic(6, "全景"),
+  plat(7, "平面"),
+  mark(8, "标记");
 
-
-  const AlbumSecondType(this.value,this.name);
+  const AlbumSecondType(this.value, this.name);
   final int value;
   final String name;
 }
 
 class AlbumData {
-   AlbumType albumType;
-   AlbumSecondType secondType;
-   String title;
-   String? imageUrl;
+  AlbumType albumType;
+  AlbumSecondType secondType;
+  String title;
+  String? imageUrl;
 
-   AlbumData({
-     required this.albumType,
-     required this.secondType,
-     required this.title,
-     this.imageUrl
-   });
+  AlbumData({
+    required this.albumType,
+    required this.secondType,
+    required this.title,
+    this.imageUrl,
+  });
 }

@@ -7,9 +7,5 @@ class FeedItem {
   final String title;
   final String author;
 
-  FeedItem({
-    required this.imageUrl,
-    required this.title,
-    required this.author,
-  });
+  FeedItem({required this.imageUrl, required this.title, required this.author});
 }

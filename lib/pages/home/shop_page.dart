@@ -16,7 +16,7 @@ class ShopPage extends StatelessWidget {
         //home_page.dart 中设置了extendBodyBehindAppBar: curSelectIdx == 2,
         // 防止home_page.dart tab 切换时没有设置extendBodyBehindAppBar属于导致页面跳变的bug
         // 用于占位
-         SizedBox(height: topOffset),
+        SizedBox(height: topOffset),
         _buildBanner(),
         const SizedBox(height: 24),
         _buildSectionTitle('消费级产品'),
@@ -33,9 +33,7 @@ class ShopPage extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
-        gradient: const LinearGradient(
-          colors: [Colors.black, Colors.black87],
-        ),
+        gradient: const LinearGradient(colors: [Colors.black, Colors.black87]),
       ),
       child: Row(
         children: [
@@ -69,16 +67,13 @@ class ShopPage extends StatelessWidget {
                   ),
                   child: const Text(
                     '立即购买',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),
               ],
             ),
           ),
-          const Icon(Icons.camera_alt,
-              size: 72, color: Colors.white30),
+          const Icon(Icons.camera_alt, size: 72, color: Colors.white30),
         ],
       ),
     );
@@ -87,10 +82,7 @@ class ShopPage extends StatelessWidget {
   Widget _buildSectionTitle(String title) {
     return Text(
       title,
-      style: const TextStyle(
-        fontSize: 18,
-        fontWeight: FontWeight.bold,
-      ),
+      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
     );
   }
 
@@ -108,19 +100,14 @@ class ShopPage extends StatelessWidget {
       ),
       itemBuilder: (_, index) {
         return _buildProductItem(
-          name: index.isEven
-              ? '影石 Insta360 X4 Air'
-              : '影石 Insta360 Wave',
+          name: index.isEven ? '影石 Insta360 X4 Air' : '影石 Insta360 Wave',
           price: index.isEven ? '¥2,399 起' : '¥2,198 起',
         );
       },
     );
   }
 
-  Widget _buildProductItem({
-    required String name,
-    required String price,
-  }) {
+  Widget _buildProductItem({required String name, required String price}) {
     return Column(
       children: [
         Expanded(
@@ -129,20 +116,14 @@ class ShopPage extends StatelessWidget {
               color: Colors.grey.shade100,
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Center(
-              child: Icon(Icons.camera_alt, size: 48),
-            ),
+            child: const Center(child: Icon(Icons.camera_alt, size: 48)),
           ),
         ),
         const SizedBox(height: 8),
         Text(name, textAlign: TextAlign.center),
         const SizedBox(height: 4),
-        Text(
-          price,
-          style: const TextStyle(color: Colors.grey),
-        ),
+        Text(price, style: const TextStyle(color: Colors.grey)),
       ],
     );
   }
 }
-

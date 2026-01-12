@@ -23,13 +23,13 @@ class _RecommendPageState extends State<RecommendPage>
   late TabController _subTabController;
   String _selectedDevice = 'X系列'; // State for selected device
 
-  final List<RecommendType> _tabs =  [
-    RecommendType('收藏',RecommendId.like),
-    RecommendType('关注',RecommendId.like),
-    RecommendType('推荐',RecommendId.like),
-    RecommendType('日常',RecommendId.like),
-    RecommendType('旅行',RecommendId.like),
-    RecommendType('摩托车',RecommendId.like),
+  final List<RecommendType> _tabs = [
+    RecommendType('收藏', RecommendId.like),
+    RecommendType('关注', RecommendId.like),
+    RecommendType('推荐', RecommendId.like),
+    RecommendType('日常', RecommendId.like),
+    RecommendType('旅行', RecommendId.like),
+    RecommendType('摩托车', RecommendId.like),
   ];
 
   @override
@@ -42,6 +42,7 @@ class _RecommendPageState extends State<RecommendPage>
       initialIndex: 2,
     );
   }
+
   @override
   void dispose() {
     _subTabController.dispose();
@@ -60,7 +61,7 @@ class _RecommendPageState extends State<RecommendPage>
           Expanded(
             child: TabBarView(
               controller: _subTabController,
-              children: _tabs.map((e) =>_buildContent(e)).toList(),
+              children: _tabs.map((e) => _buildContent(e)).toList(),
             ),
           ),
         ],
@@ -101,13 +102,12 @@ class _RecommendPageState extends State<RecommendPage>
               tabs: _tabs
                   .map(
                     (e) => Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  child: Tab(text: e.name),
-                ),
-              )
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: Tab(text: e.name),
+                    ),
+                  )
                   .toList(),
             ),
-
           ),
         ],
       ),
@@ -158,25 +158,25 @@ class _RecommendPageState extends State<RecommendPage>
     );
   }
 
-
   /// 内容示例
   Widget _buildContent(RecommendType recommend) {
-    return ListView.builder(
-      padding: const EdgeInsets.all(12),
-      itemCount: 20,
-      itemBuilder: (_, i) {
-        return Container(
-          height: 120,
-          margin: const EdgeInsets.only(bottom: 12),
-          decoration: BoxDecoration(
-            color: Colors.grey.shade300,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          alignment: Alignment.center,
-          child: Text('${recommend.name} - item $i'),
-        );
-      },
-    );
+    // return ListView.builder(
+    //   padding: const EdgeInsets.all(12),
+    //   itemCount: 20,
+    //   itemBuilder: (_, i) {
+    //     return Container(
+    //       height: 120,
+    //       margin: const EdgeInsets.only(bottom: 12),
+    //       decoration: BoxDecoration(
+    //         color: Colors.grey.shade300,
+    //         borderRadius: BorderRadius.circular(12),
+    //       ),
+    //       alignment: Alignment.center,
+    //       child: Text('${recommend.name} - item $i'),
+    //     );
+    //   },
+    // );
+    return RecommendTabPage(category: recommend.name);
   }
 
   /// 二级越界 → 主动切一级
@@ -194,7 +194,6 @@ class _RecommendPageState extends State<RecommendPage>
   }
 }
 
-
 class _DeviceSelectorSheet extends StatefulWidget {
   final String selected;
   final ValueChanged<String> onSelected;
@@ -202,7 +201,7 @@ class _DeviceSelectorSheet extends StatefulWidget {
   const _DeviceSelectorSheet({
     required this.selected,
     required this.onSelected,
-    super.key
+    super.key,
   });
 
   @override
@@ -210,7 +209,6 @@ class _DeviceSelectorSheet extends StatefulWidget {
 }
 
 class _DeviceSelectorSheetState extends State<_DeviceSelectorSheet> {
-
   late List<DeviceType> _deviceTypes;
 
   @override
@@ -241,10 +239,7 @@ class _DeviceSelectorSheetState extends State<_DeviceSelectorSheet> {
                 child: Center(
                   child: Text(
                     '选择机型',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                   ),
                 ),
               ),
@@ -267,7 +262,9 @@ class _DeviceSelectorSheetState extends State<_DeviceSelectorSheet> {
                     setState(() {
                       _deviceTypes = _deviceTypes.map((device) {
                         return DeviceType(
-                            device.name, device.name == item.name);
+                          device.name,
+                          device.name == item.name,
+                        );
                       }).toList();
                     });
                     widget.onSelected(item.name);
@@ -296,8 +293,11 @@ class _DeviceSelectorSheetState extends State<_DeviceSelectorSheet> {
                           ),
                         ),
                         if (item.isSelect)
-                          const Icon(Icons.check,
-                              size: 20, color: Colors.white),
+                          const Icon(
+                            Icons.check,
+                            size: 20,
+                            color: Colors.white,
+                          ),
                       ],
                     ),
                   ),

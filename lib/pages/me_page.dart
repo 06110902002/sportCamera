@@ -29,10 +29,22 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   // 模拟数据列表
   final List<FeedItem> _items = [
-    FeedItem(imageUrl: 'https://via.placeholder.com/400x300/FF0000/FFFFFF?text=Item1', title: 'Item 1'),
-    FeedItem(imageUrl: 'https://via.placeholder.com/400x300/00FF00/FFFFFF?text=Item2', title: 'Item 2'),
-    FeedItem(imageUrl: 'https://via.placeholder.com/400x300/0000FF/FFFFFF?text=Item3', title: 'Item 3'),
-    FeedItem(imageUrl: 'https://via.placeholder.com/400x300/FFFF00/000000?text=Item4', title: 'Item 4'),
+    FeedItem(
+      imageUrl: 'https://via.placeholder.com/400x300/FF0000/FFFFFF?text=Item1',
+      title: 'Item 1',
+    ),
+    FeedItem(
+      imageUrl: 'https://via.placeholder.com/400x300/00FF00/FFFFFF?text=Item2',
+      title: 'Item 2',
+    ),
+    FeedItem(
+      imageUrl: 'https://via.placeholder.com/400x300/0000FF/FFFFFF?text=Item3',
+      title: 'Item 3',
+    ),
+    FeedItem(
+      imageUrl: 'https://via.placeholder.com/400x300/FFFF00/000000?text=Item4',
+      title: 'Item 4',
+    ),
     //FeedItem(imageUrl: 'https://via.placeholder.com/400x300/FF00FF/FFFFFF?text=Item5', title: 'Item 5'),
     // 取消下面的注释可以测试内容不足时的收缩效果
     // FeedItem(imageUrl: 'https://via.placeholder.com/400x300/00FFFF/000000?text=Item6', title: 'Item 6'),
@@ -75,12 +87,13 @@ class _MyHomePageState extends State<MyHomePage> {
                         // 因为父级是可滚动的，所以这里禁用自身的滚动
                         physics: const NeverScrollableScrollPhysics(),
                         padding: const EdgeInsets.all(8.0), // 网格内边距
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 8.0,
-                          mainAxisSpacing: 8.0,
-                          childAspectRatio: 1.0, // 可以根据需要调整
-                        ),
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              crossAxisSpacing: 8.0,
+                              mainAxisSpacing: 8.0,
+                              childAspectRatio: 1.0, // 可以根据需要调整
+                            ),
                         itemCount: _items.length,
                         itemBuilder: (context, index) {
                           return _FeedCard(item: _items[index]);

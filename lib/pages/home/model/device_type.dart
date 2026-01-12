@@ -3,11 +3,9 @@
 /// @Copyright by JYXC Since 2023
 /// Description: 设备类型数据
 class DeviceType {
+  String name;
 
-   String name;
-
-   bool isSelect;
+  bool isSelect;
 
   DeviceType(this.name, this.isSelect);
-
 }

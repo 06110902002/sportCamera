@@ -35,6 +35,9 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   flutter_staggered_grid_view: ^0.7.0
+  pull_to_refresh: ^2.0.0 # 添加这一行
+  easy_refresh: ^3.4.0 #下拉、上拉加载刷新
+
 
 dev_dependencies:
   flutter_test:
