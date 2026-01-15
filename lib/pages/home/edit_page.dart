@@ -812,52 +812,61 @@ class _CombinedTabHeader extends SliverPersistentHeaderDelegate {
         children: [
           SizedBox(
             height: kTopBarH,
-            child: TabBar(
-              // 1. 让 TabBar 变为可滚动的，这样 Tab 的宽度会根据内容自适应
-              isScrollable: true,
-              tabAlignment: TabAlignment.start,
-              controller: mainController,
-              labelColor: Colors.black,
-              unselectedLabelColor: Colors.grey,
-              dividerColor: Colors.transparent,
-              tabs: [
-                Tab(
-                  child: Row(
-                    children: [
-                      Icon(Icons.air, size: 12, color: _iconColor(0)),
-                      SizedBox(width: 4),
-                      Text("AI 创意库"),
-                    ],
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: TabBar(
+                // 1. 让 TabBar 变为可滚动的，这样 Tab 的宽度会根据内容自适应
+                isScrollable: true,
+                //tabAlignment 属性在M2中无效,仅在m3 中生效
+                //tabAlignment: TabAlignment.start,
+                controller: mainController,
+                labelColor: Colors.black,
+                unselectedLabelColor: Colors.grey,
+                dividerColor: Colors.transparent,
+                tabs: [
+                  Tab(
+                    child: Row(
+                      children: [
+                        Icon(Icons.air, size: 12, color: _iconColor(0)),
+                        SizedBox(width: 4),
+                        Text("AI 创意库"),
+                      ],
+                    ),
                   ),
-                ),
-                Tab(
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.holiday_village_outlined,
-                        size: 12,
-                        color: _iconColor(1),
-                      ),
-                      SizedBox(width: 4),
-                      Text("主题模板"),
-                    ],
+                  Tab(
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.holiday_village_outlined,
+                          size: 12,
+                          color: _iconColor(1),
+                        ),
+                        SizedBox(width: 4),
+                        Text("主题模板"),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
 
           SizedBox(
             height: kSubBarH,
-            child: TabBar(
-              isScrollable: true,
-              tabAlignment: TabAlignment.start,
-              controller: subController,
-              dividerColor: Colors.transparent,
-              tabs: subTabs.map((e) => Tab(text: e)).toList(),
-              indicatorColor: Colors.blue,
-              indicatorWeight: 3,
-              labelPadding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: TabBar(
+                isScrollable: true,
+                //tabAlignment: TabAlignment.start,
+                controller: subController,
+                labelColor: Colors.black,
+                unselectedLabelColor: Colors.grey,
+                dividerColor: Colors.transparent,
+                tabs: subTabs.map((e) => Tab(text: e)).toList(),
+                indicatorColor: Colors.blue,
+                indicatorWeight: 3,
+                labelPadding: const EdgeInsets.symmetric(horizontal: 16),
+              ),
             ),
           ),
         ],
@@ -963,11 +972,16 @@ class _SecondLevelPageState extends State<SecondLevelPage> {
             //     child: Text('$title - item $i'),
             //   ),
             // );
-            return AiTemplete(mainTabIdx: mainTabIndex, subTabIdx: widget.tabController.index);
+            return AiTemplete(
+              mainTabIdx: mainTabIndex,
+              subTabIdx: widget.tabController.index,
+            );
           } else {
-            return ThemeTemplete(mainTabIdx: mainTabIndex, subTabIdx: widget.tabController.index);
+            return ThemeTemplete(
+              mainTabIdx: mainTabIndex,
+              subTabIdx: widget.tabController.index,
+            );
           }
-
         },
       ),
     );
