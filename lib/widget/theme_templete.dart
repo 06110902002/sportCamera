@@ -1,56 +1,39 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const MyApp());
-}
+/// Author: Rambo.Liu
+/// Date: 2026/1/15 14:33
+/// @Copyright by JYXC Since 2023
+/// Description: 剪辑页面的主题模板组件
+class ThemeTemplete extends StatefulWidget {
+  final int mainTabIdx;
+  final int subTabIdx;
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: '网格列表-完美加载规则版',
-      theme: ThemeData(primarySwatch: Colors.blue, scaffoldBackgroundColor: Colors.white),
-      home: const GridStickyListPage(),
-      debugShowCheckedModeBanner: false,
-    );
-  }
-}
-
-class GridStickyListPage extends StatefulWidget {
-  const GridStickyListPage({super.key});
+  const ThemeTemplete({
+    super.key,
+    required this.mainTabIdx,
+    required this.subTabIdx,
+  });
 
   @override
-  State<GridStickyListPage> createState() => _GridStickyListPageState();
+  State<ThemeTemplete> createState() => _GridStickyListPageState();
 }
 
-class _GridStickyListPageState extends State<GridStickyListPage> {
+class _GridStickyListPageState extends State<ThemeTemplete> {
   /// 数据源 & 核心配置
   final List<GridItemModel> gridList = [];
   final int _loadPageSize = 10; // 每次请求固定加载10条
-  bool _isLoading = false;      // 加载锁 - 防止重复请求
-  bool _hasNoMore = false;      // 是否没有更多数据
-
-  /// 滚动控制器 - 监听上拉加载
-  final ScrollController _scrollController = ScrollController();
+  bool _isLoading = false; // 加载锁 - 防止重复请求
+  bool _hasNoMore = false; // 是否没有更多数据
 
   @override
   void initState() {
     super.initState();
     _loadMoreData(); // 初始化加载第一页
-    // 上拉到底部触发加载监听
-    _scrollController.addListener(() {
-      if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 50 &&
-          !_isLoading && !_hasNoMore) {
-        _loadMoreData();
-      }
-    });
   }
 
   @override
   void dispose() {
-    _scrollController.dispose(); // 销毁控制器防内存泄漏
     super.dispose();
   }
 
@@ -64,6 +47,10 @@ class _GridStickyListPageState extends State<GridStickyListPage> {
       // ========== 真实项目中 替换这部分为你的接口请求即可 ==========
       // 模拟网络请求延迟
       await Future.delayed(const Duration(milliseconds: 800));
+
+      // 异步操作结束后，检查页面是否还存在，防止内存泄漏
+      if (!mounted) return;
+
       // 模拟接口返回数据：核心规则实现
       List<GridItemModel> newDataList = [];
       int currentDataCount = gridList.length;
@@ -76,13 +63,17 @@ class _GridStickyListPageState extends State<GridStickyListPage> {
       }
       // 生成模拟数据
       for (int i = currentDataCount; i < endIndex; i++) {
-        newDataList.add(GridItemModel(
-          imageUrl: i == 0
-              ? "https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/1d78ee36d78c4c96ab2f54bd3438f2bf.png~tplv-a9rns2rl98-image.png?lk3s=8e244e95&rcl=20260115141902DF8596DB8F0F6D5C33F0&rrcfp=dafada99&x-expires=2084681942&x-signature=K%2FSyFqr%2BdppjVJAakd9Bj1PKnmg%3D"
-              : "",
-          title: i == 0 ? "全员AI灵魂战车" : "测试标题 ${i + 1}",
-          isTop: i == 0,
-        ));
+        newDataList.add(
+          GridItemModel(
+            imageUrl: i == 0
+                ? "https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/1d78ee36d78c4c96ab2f54bd3438f2bf.png~tplv-a9rns2rl98-image.png?lk3s=8e244e95&rcl=20260115141902DF8596DB8F0F6D5C33F0&rrcfp=dafada99&x-expires=2084681942&x-signature=K%2FSyFqr%2BdppjVJAakd9Bj1PKnmg%3D"
+                : "",
+            title: i == 0
+                ? "全员AI灵魂战车"
+                : "测试标题 ${i + 1} mainTabIdx = ${widget.mainTabIdx} subTabIdx = ${widget.subTabIdx}",
+            isTop: i == 0,
+          ),
+        );
       }
       // ==========================================================
 
@@ -100,33 +91,48 @@ class _GridStickyListPageState extends State<GridStickyListPage> {
       });
     } catch (e) {
       // 异常处理：加载失败关闭loading
+      if (!mounted) return;
       setState(() => _isLoading = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        margin: const EdgeInsets.symmetric(vertical: 250),
-        height: 400,
-        color: Colors.yellow,
-        child: CustomScrollView(
+    //这里使用 滚动位置滚动，而不是使用ScrollController 是为了防止与edit_page.dart 文件 NestedScrollView 滚动冲突
+    // 防止NestedScrollView滚动不生效，因为这里一旦设置了自己ScrollController,它就会忽略外部的滚动
+    // 当将这个 _scrollController 赋值给 ThemeTemplete 内部的 CustomScrollView 时，
+    // 就等于告诉它：“不要理会外部 NestedScrollView 的协调，你自己管理自己的滚动。”◦
+    // 这导致 ThemeTemplete 的 CustomScrollView 创建了一个独立的、与外部隔绝的滚动世界。
+    // 所有的滚动事件都被它自己的控制器“消费”掉了，
+    // 所以外部的 headerSliverBuilder (您的那些Sliver头部) 完全感知不到内部的滚动，自然也就不会有折叠效果。
+    return NotificationListener<ScrollNotification>(
+      onNotification: (notification) {
+        // 监听滚动，触发加载更多
+        if (notification is ScrollUpdateNotification &&
+            notification.metrics.pixels >=
+                notification.metrics.maxScrollExtent - 50 &&
+            !_isLoading &&
+            !_hasNoMore) {
+          _loadMoreData();
+        }
+        return false; // 返回false，让通知继续向上传递，以驱动NestedScrollView
+      },
+      child: CustomScrollView(
         physics: const BouncingScrollPhysics(), // 回弹滚动效果
-        controller: _scrollController,
         slivers: [
           // ========== 网格列表主体 - 样式/间距/圆角 完美还原 ==========
           SliverPadding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             sliver: SliverGrid(
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,          // 固定2列
-                crossAxisSpacing: 10,        // item左右间距10
-                mainAxisSpacing: 10,         // item上下间距10
-                childAspectRatio: 1 / 1.18,  // item宽高比完美还原
+                crossAxisCount: 2, // 固定2列
+                crossAxisSpacing: 10, // item左右间距10
+                mainAxisSpacing: 10, // item上下间距10
+                childAspectRatio:
+                    17 / 24, // item宽高比完美还原,实际的情况需要与视觉商量好 使用统一的图片宽度比，这个值填视觉给的宽高比即可
               ),
               delegate: SliverChildBuilderDelegate(
-                    (context, index) => _buildGridItem(gridList[index]),
+                (context, index) => _buildGridItem(gridList[index]),
                 childCount: gridList.length,
               ),
             ),
@@ -142,8 +148,7 @@ class _GridStickyListPageState extends State<GridStickyListPage> {
             ),
           ),
         ],
-      ),)
-
+      ),
     );
   }
 
@@ -161,18 +166,21 @@ class _GridStickyListPageState extends State<GridStickyListPage> {
                   flex: 17,
                   child: item.imageUrl.isNotEmpty
                       ? Image.network(
-                    item.imageUrl,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => _buildEmptyImage(),
-                  )
+                          item.imageUrl,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => _buildEmptyImage(),
+                        )
                       : _buildEmptyImage(),
                 ),
                 Expanded(
                   flex: 3,
                   child: Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 4,
+                    ),
                     alignment: Alignment.centerLeft,
                     child: Text(
                       item.title,
@@ -203,7 +211,11 @@ class _GridStickyListPageState extends State<GridStickyListPage> {
               ),
               child: const Text(
                 "置顶",
-                style: TextStyle(fontSize: 11, color: Colors.white, fontWeight: FontWeight.w500),
+                style: TextStyle(
+                  fontSize: 11,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
           ),
@@ -217,7 +229,11 @@ class _GridStickyListPageState extends State<GridStickyListPage> {
       width: double.infinity,
       color: const Color(0xFFF5F5F5),
       alignment: Alignment.center,
-      child: const Icon(Icons.image_outlined, color: Color(0xFFCCCCCC), size: 28),
+      child: const Icon(
+        Icons.image_outlined,
+        color: Color(0xFFCCCCCC),
+        size: 28,
+      ),
     );
   }
 

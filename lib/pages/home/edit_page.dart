@@ -489,40 +489,38 @@ class _SmallBtn extends StatelessWidget {
 
 */
 
-
-
-
-
-
 import 'package:flutter/material.dart';
+import 'package:sport_camera/widget/theme_templete.dart';
 
-void main() => runApp(const MyApp());
+import '../../widget/ai_templete.dart';
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+// void main() => runApp(const MyApp());
+//
+// class MyApp extends StatelessWidget {
+//   const MyApp({super.key});
+//   @override
+//   Widget build(BuildContext context) {
+//     return const MaterialApp(
+//       debugShowCheckedModeBanner: false,
+//       home: EditPage(),
+//     );
+//   }
+// }
+
+class EditPage extends StatefulWidget {
+  const EditPage({super.key});
   @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: HomePage(),
-    );
-  }
+  State<EditPage> createState() => _HomePageState();
 }
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
+class _HomePageState extends State<EditPage> with TickerProviderStateMixin {
   late TabController _mainController;
 
   final Map<int, TabController> _subControllers = {};
   final Map<int, PageController> _subPageControllers = {};
   final Map<int, int> _subTabIndexRecord = {};
 
-  final aiTabs = ['推荐', '炫酷特效', '延时', '定格', '分身','转场','创意拍摄'];
+  final aiTabs = ['推荐', '炫酷特效', '延时', '定格', '分身', '转场', '创意拍摄'];
   final themeTabs = ['推荐', 'AI特效', '最新', '元旦'];
 
   @override
@@ -553,11 +551,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       final subController = _subControllers[mainTabIndex]!;
       final idx = _subTabIndexRecord[_mainController.index] ?? 0;
       final subPageController = _subPageControllers[_mainController.index]!;
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (subPageController.hasClients) {
-              subPageController.jumpToPage(idx);
-            }
-          });
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (subPageController.hasClients) {
+          subPageController.jumpToPage(idx);
+        }
+      });
     });
   }
 
@@ -573,13 +571,28 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  TabController get currentSubController => _subControllers[_mainController.index]!;
-  PageController get currentSubPageController => _subPageControllers[_mainController.index]!;
+  TabController get currentSubController =>
+      _subControllers[_mainController.index]!;
+  PageController get currentSubPageController =>
+      _subPageControllers[_mainController.index]!;
 
-  List<String> get currentSubTabs => _mainController.index == 0 ? aiTabs : themeTabs;
+  List<String> get currentSubTabs =>
+      _mainController.index == 0 ? aiTabs : themeTabs;
 
   @override
   Widget build(BuildContext context) {
+    // 按钮样式
+    final buttonStyle = ElevatedButton.styleFrom(
+      backgroundColor: Colors.grey[200],
+      foregroundColor: Colors.black,
+      alignment: Alignment.centerLeft,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 20,
+        vertical: 16,
+      ), // 高度约 56
+      minimumSize: const Size(double.infinity, 56),
+    );
     // 使用AnimatedBuilder来监听TabController的变化
     return AnimatedBuilder(
       animation: _mainController,
@@ -589,50 +602,132 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         return Scaffold(
           body: NestedScrollView(
             headerSliverBuilder: (_, __) => [
+              //添加 SliverAppBar 可以用来控制 SliverPersistentHeader吸顶在屏幕的位置
               const SliverAppBar(
-                pinned: false,
+                toolbarHeight: 4.0,
+                pinned: true,
                 elevation: 0,
-                backgroundColor: Colors.yellow,
+                backgroundColor: Colors.white,
               ),
               SliverToBoxAdapter(
                 child: Container(
                   height: 60,
+                  color: Colors.white,
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   alignment: Alignment.centerLeft,
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    child: const Text('投递活动'),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // 投稿活动
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: const [
+                            Icon(Icons.book, size: 16, color: Colors.orange),
+                            SizedBox(width: 4),
+                            Text('投稿活动', style: TextStyle(fontSize: 14)),
+                            Icon(
+                              Icons.arrow_forward_ios,
+                              size: 12,
+                              color: Colors.grey,
+                            ),
+                          ],
+                        ),
+                      ),
+                      // AI任务
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: const [
+                          Icon(Icons.star, size: 18, color: Colors.purple),
+                          SizedBox(width: 4),
+                          Text(
+                            'AI任务',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
               ),
               SliverToBoxAdapter(
                 child: Container(
-                  height: 100,
+                  height: 128,
+                  color: Colors.white,
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // 左侧：一键成片
                       Expanded(
                         child: Container(
-                          color: Colors.yellow.shade200,
-                          alignment: Alignment.center,
-                          child: const Text('一键成片'),
+                          height: 128, // = 56 + 16 + 56
+                          decoration: BoxDecoration(
+                            color: Colors.yellow,
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.orange.withOpacity(0.3),
+                                blurRadius: 8,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: const [
+                              Icon(
+                                Icons.auto_awesome,
+                                size: 36,
+                                color: Colors.black,
+                              ),
+                              SizedBox(height: 8),
+                              Text(
+                                '一键成片',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                       const SizedBox(width: 16),
+                      // 右侧：开始创作 + 草稿箱
                       Expanded(
                         child: Column(
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            Expanded(
-                              child: ElevatedButton(
-                                onPressed: () {},
-                                child: const Text('开始创作'),
+                            ElevatedButton(
+                              onPressed: () {},
+                              style: buttonStyle,
+                              child: const Text(
+                                '开始创作',
+                                style: TextStyle(fontSize: 12),
                               ),
                             ),
                             const SizedBox(height: 16),
-                            Expanded(
-                              child: ElevatedButton(
-                                onPressed: () {},
-                                child: const Text('草稿箱'),
+                            ElevatedButton(
+                              onPressed: () {},
+                              style: buttonStyle,
+
+                              child: const Text(
+                                '草稿箱',
+                                style: TextStyle(fontSize: 12),
                               ),
                             ),
                           ],
@@ -642,6 +737,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   ),
                 ),
               ),
+              //占位
+              SliverToBoxAdapter(
+                child: Container(color: Colors.white, height: 20),
+              ),
+
               SliverPersistentHeader(
                 pinned: true,
                 delegate: _CombinedTabHeader(
@@ -657,12 +757,14 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               controller: _mainController,
               children: [
                 SecondLevelPage(
+                  mainController: _mainController,
                   tabs: aiTabs,
                   tabController: _subControllers[0]!,
                   pageController: _subPageControllers[0]!,
                   onTabChanged: (idx) => _subTabIndexRecord[0] = idx,
                 ),
                 SecondLevelPage(
+                  mainController: _mainController,
                   tabs: themeTabs,
                   tabController: _subControllers[1]!,
                   pageController: _subPageControllers[1]!,
@@ -682,6 +784,8 @@ class _CombinedTabHeader extends SliverPersistentHeaderDelegate {
   final TabController subController;
   final List<String> aiTabs;
   final List<String> themeTabs;
+  final double kTopBarH = 60.0;
+  final double kSubBarH = 60.0;
 
   _CombinedTabHeader({
     required this.mainController,
@@ -691,9 +795,13 @@ class _CombinedTabHeader extends SliverPersistentHeaderDelegate {
   });
 
   @override
-  double get minExtent => 104;
+  double get minExtent => kTopBarH + kSubBarH;
   @override
-  double get maxExtent => 104;
+  double get maxExtent => kTopBarH + kSubBarH;
+
+  Color _iconColor(int index) {
+    return mainController.index == index ? Colors.purple : Colors.grey;
+  }
 
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlaps) {
@@ -702,22 +810,55 @@ class _CombinedTabHeader extends SliverPersistentHeaderDelegate {
       color: Colors.white,
       child: Column(
         children: [
-          TabBar(
-            controller: mainController,
-            labelColor: Colors.black,
-            unselectedLabelColor: Colors.grey,
-            tabs: const [
-              Tab(text: "AI 创意库"),
-              Tab(text: "主题模板"),
-            ],
+          SizedBox(
+            height: kTopBarH,
+            child: TabBar(
+              // 1. 让 TabBar 变为可滚动的，这样 Tab 的宽度会根据内容自适应
+              isScrollable: true,
+              tabAlignment: TabAlignment.start,
+              controller: mainController,
+              labelColor: Colors.black,
+              unselectedLabelColor: Colors.grey,
+              dividerColor: Colors.transparent,
+              tabs: [
+                Tab(
+                  child: Row(
+                    children: [
+                      Icon(Icons.air, size: 12, color: _iconColor(0)),
+                      SizedBox(width: 4),
+                      Text("AI 创意库"),
+                    ],
+                  ),
+                ),
+                Tab(
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.holiday_village_outlined,
+                        size: 12,
+                        color: _iconColor(1),
+                      ),
+                      SizedBox(width: 4),
+                      Text("主题模板"),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
-          TabBar(
-            isScrollable: true,
-            controller: subController,
-            tabs: subTabs.map((e) => Tab(text: e)).toList(),
-            indicatorColor: Colors.blue,
-            indicatorWeight: 3,
-            labelPadding: const EdgeInsets.symmetric(horizontal: 16),
+
+          SizedBox(
+            height: kSubBarH,
+            child: TabBar(
+              isScrollable: true,
+              tabAlignment: TabAlignment.start,
+              controller: subController,
+              dividerColor: Colors.transparent,
+              tabs: subTabs.map((e) => Tab(text: e)).toList(),
+              indicatorColor: Colors.blue,
+              indicatorWeight: 3,
+              labelPadding: const EdgeInsets.symmetric(horizontal: 16),
+            ),
           ),
         ],
       ),
@@ -729,6 +870,8 @@ class _CombinedTabHeader extends SliverPersistentHeaderDelegate {
 }
 
 class SecondLevelPage extends StatefulWidget {
+  //一级 TabController
+  final TabController mainController;
   final List<String> tabs;
   final TabController tabController;
   final PageController pageController;
@@ -736,6 +879,7 @@ class SecondLevelPage extends StatefulWidget {
 
   const SecondLevelPage({
     super.key,
+    required this.mainController,
     required this.tabs,
     required this.tabController,
     required this.pageController,
@@ -745,7 +889,6 @@ class SecondLevelPage extends StatefulWidget {
   @override
   State<SecondLevelPage> createState() => _SecondLevelPageState();
 }
-
 
 class _SecondLevelPageState extends State<SecondLevelPage> {
   // This flag is true for the entire duration of a user-initiated scroll,
@@ -769,17 +912,22 @@ class _SecondLevelPageState extends State<SecondLevelPage> {
     // It should NOT run if the tab is changing because of a PageView swipe.
     // The `!_isUserScrolling` guard is the key to breaking the feedback loop.
     if (widget.tabController.indexIsChanging && !_isUserScrolling) {
-      widget.pageController.animateToPage(widget.tabController.index,
-          duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+      widget.pageController.animateToPage(
+        widget.tabController.index,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    int mainTabIndex = widget.mainController.index;
     return NotificationListener<ScrollNotification>(
       onNotification: (notification) {
         // A user drag will trigger a ScrollStartNotification with non-null dragDetails.
-        if (notification is ScrollStartNotification && notification.dragDetails != null) {
+        if (notification is ScrollStartNotification &&
+            notification.dragDetails != null) {
           _isUserScrolling = true;
         }
         // The ScrollEndNotification is triggered when a scroll activity concludes.
@@ -803,16 +951,23 @@ class _SecondLevelPageState extends State<SecondLevelPage> {
         },
         itemBuilder: (_, index) {
           final title = widget.tabs[index];
-          return ListView.builder(
-            itemCount: 20,
-            itemBuilder: (_, i) => Container(
-              height: 80,
-              margin: const EdgeInsets.all(12),
-              color: Colors.blue.shade50,
-              alignment: Alignment.center,
-              child: Text('$title - item $i'),
-            ),
-          );
+          if (mainTabIndex == 0) {
+            // return ListView.builder(
+            //   padding: EdgeInsetsGeometry.fromLTRB(0, 16, 0,0),
+            //   itemCount: 20,
+            //   itemBuilder: (_, i) => Container(
+            //     height: 80,
+            //     margin: const EdgeInsets.all(10),
+            //     color: Colors.blue.shade50,
+            //     alignment: Alignment.center,
+            //     child: Text('$title - item $i'),
+            //   ),
+            // );
+            return AiTemplete(mainTabIdx: mainTabIndex, subTabIdx: widget.tabController.index);
+          } else {
+            return ThemeTemplete(mainTabIdx: mainTabIndex, subTabIdx: widget.tabController.index);
+          }
+
         },
       ),
     );

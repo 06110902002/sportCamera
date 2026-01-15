@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sport_camera/pages/clip_page.dart';
+import 'package:sport_camera/pages/home/edit_page.dart';
 import 'pages/home/home_page.dart';
 import 'pages/album_page.dart';
 
@@ -14,9 +15,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        useMaterial3: false,
-      ),
+      // theme: ThemeData(
+      //   useMaterial3: false,
+      // ),
       home: const MainTabPage(),
     );
   }
@@ -40,7 +41,7 @@ class _MainTabPageState extends State<MainTabPage> {
     )
     ,
      ClipPage(), // 相机
-    const Placeholder(), // 剪辑
+    const EditPage(), // 剪辑
     const Placeholder(), // 我的
   ];
 
