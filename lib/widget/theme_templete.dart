@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:sport_camera/pages/edit/edit_templete_detail.dart';
 
 /// Author: Rambo.Liu
 /// Date: 2026/1/15 14:33
@@ -154,72 +155,78 @@ class _GridStickyListPageState extends State<ThemeTemplete> {
 
   /// 构建单个网格Item - 带圆角+置顶标签+100%样式还原
   Widget _buildGridItem(GridItemModel item) {
-    return Stack(
-      children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(8), // item圆角，可自定义大小
-          child: Container(
-            color: Colors.white,
-            child: Column(
-              children: [
-                Expanded(
-                  flex: 17,
-                  child: item.imageUrl.isNotEmpty
-                      ? Image.network(
-                          item.imageUrl,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => _buildEmptyImage(),
-                        )
-                      : _buildEmptyImage(),
-                ),
-                Expanded(
-                  flex: 3,
-                  child: Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 6,
-                      vertical: 4,
-                    ),
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      item.title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 13,
-                        color: Color(0xFF333333),
-                        fontWeight: FontWeight.normal,
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => const EditTempleteDetail()));
+      },
+      child: Stack(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8), // item圆角，可自定义大小
+            child: Container(
+              color: Colors.white,
+              child: Column(
+                children: [
+                  Expanded(
+                    flex: 17,
+                    child: item.imageUrl.isNotEmpty
+                        ? Image.network(
+                            item.imageUrl,
+                            width: double.infinity,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) => _buildEmptyImage(),
+                          )
+                        : _buildEmptyImage(),
+                  ),
+                  Expanded(
+                    flex: 3,
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 4,
+                      ),
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        item.title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 13,
+                          color: Color(0xFF333333),
+                          fontWeight: FontWeight.normal,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
-          ),
-        ),
-        // 置顶标签 - 悬浮左上角 不被圆角裁剪
-        if (item.isTop)
-          Positioned(
-            left: 6,
-            top: 6,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-              decoration: BoxDecoration(
-                color: const Color(0xFFFF4D4F),
-                borderRadius: BorderRadius.circular(2),
-              ),
-              child: const Text(
-                "置顶",
-                style: TextStyle(
-                  fontSize: 11,
-                  color: Colors.white,
-                  fontWeight: FontWeight.w500,
-                ),
+                ],
               ),
             ),
           ),
-      ],
+          // 置顶标签 - 悬浮左上角 不被圆角裁剪
+          if (item.isTop)
+            Positioned(
+              left: 6,
+              top: 6,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFF4D4F),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+                child: const Text(
+                  "置顶",
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
     );
   }
 
