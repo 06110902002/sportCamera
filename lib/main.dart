@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:sport_camera/pages/clip_page.dart';
 import 'package:sport_camera/pages/home/edit_page.dart';
+import 'package:sport_camera/widget/common_popup_template.dart';
 import 'package:sport_camera/widget/red_point.dart';
 import 'pages/home/home_page.dart';
 import 'pages/album_page.dart';
@@ -36,6 +37,8 @@ class MainTabPage extends StatefulWidget {
 class _MainTabPageState extends State<MainTabPage> {
   int _currentIndex = 0;
   int _myPageNotificationCount = 3;
+  late CommonPopupTemplate _activityPopup;
+
 
   late final List<Widget> _pages = [
     const HomePage(),
@@ -49,6 +52,36 @@ class _MainTabPageState extends State<MainTabPage> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    _iniActivityPopups();
+    // 进入页面自动显示活动弹窗
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _activityPopup.show();
+    });
+  }
+  void _iniActivityPopups() {
+    // 1. 活动弹窗
+    _activityPopup = CommonPopupTemplate(
+      context: context,
+      contentWidget: LeicaChallengePopup(
+        onSubmit: () {
+          _activityPopup.dismiss();
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("跳转至投稿页面")));
+        },
+      ),
+      onClose: () => debugPrint("活动弹窗关闭"),
+    );
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _activityPopup.dismiss();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: IndexedStack(
@@ -59,10 +92,11 @@ class _MainTabPageState extends State<MainTabPage> {
         clipBehavior: Clip.none,
         children: [
           BottomNavigationBar(
+            backgroundColor: _currentIndex == 1 ? Colors.black : null,
             currentIndex: _currentIndex,
             type: BottomNavigationBarType.fixed, //根据BottomNavigationBarItem 个数均分宽度，必加
             selectedItemColor: Colors.orange,
-            unselectedItemColor: Colors.grey,
+            unselectedItemColor: _currentIndex == 1 ? Colors.white70 : Colors.grey,
             onTap: (index) {
               setState(() {
                 _currentIndex = index;

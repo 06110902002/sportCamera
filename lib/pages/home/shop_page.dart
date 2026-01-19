@@ -4,6 +4,8 @@
 /// Description: TODO
 import 'package:flutter/material.dart';
 
+import '../../widget/custom_network_image.dart';
+
 class ShopPage extends StatelessWidget {
   const ShopPage({super.key});
 
@@ -112,11 +114,10 @@ class ShopPage extends StatelessWidget {
       children: [
         Expanded(
           child: Container(
-            decoration: BoxDecoration(
-              color: Colors.grey.shade100,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Center(child: Icon(Icons.camera_alt, size: 48)),
+            child: CustomNetworkImage(
+                    imageUrl: 'https://picsum.photos/300/200?random=1',
+                    borderRadius: 16,
+                ),
           ),
         ),
         const SizedBox(height: 8),
