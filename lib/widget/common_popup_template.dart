@@ -170,7 +170,7 @@ class LeicaChallengePopup extends StatelessWidget {
             borderRadius: BorderRadius.circular(8),
             image: DecorationImage(
               image: NetworkImage(
-                "https://picsum.photos/300/200?random=1"
+                "https://media.giphy.com/media/3o7TKsQ8UQ4l4LhG2c/giphy.gif"
               ),
               fit: BoxFit.cover,
             ),

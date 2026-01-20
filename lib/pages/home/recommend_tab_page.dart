@@ -4,6 +4,7 @@
 /// Description: TODO
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:sport_camera/pages/home/recommend_detail.dart';
 
 import 'home_page.dart';
 
@@ -35,6 +36,10 @@ class RecommendTabPage extends StatelessWidget {
     return InkWell(
       onTap: () {
         debugPrint('点击 $category - $index');
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const RecommendDetail()),
+        );
       },
       child: Container(
         decoration: BoxDecoration(

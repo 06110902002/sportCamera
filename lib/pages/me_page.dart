@@ -4,6 +4,7 @@
 /// Description: TODO
 import 'package:flutter/material.dart';
 
+//模拟自适应高度的网格布局
 void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
@@ -30,19 +31,19 @@ class _MyHomePageState extends State<MyHomePage> {
   // 模拟数据列表
   final List<FeedItem> _items = [
     FeedItem(
-      imageUrl: 'https://via.placeholder.com/400x300/FF0000/FFFFFF?text=Item1',
+      imageUrl: 'https://picsum.photos/300/200?random=1',
       title: 'Item 1',
     ),
     FeedItem(
-      imageUrl: 'https://via.placeholder.com/400x300/00FF00/FFFFFF?text=Item2',
+      imageUrl: 'https://picsum.photos/300/200?random=2',
       title: 'Item 2',
     ),
     FeedItem(
-      imageUrl: 'https://via.placeholder.com/400x300/0000FF/FFFFFF?text=Item3',
+      imageUrl: 'https://picsum.photos/300/200?random=3',
       title: 'Item 3',
     ),
     FeedItem(
-      imageUrl: 'https://via.placeholder.com/400x300/FFFF00/000000?text=Item4',
+      imageUrl: 'https://picsum.photos/300/200?random=4',
       title: 'Item 4',
     ),
     //FeedItem(imageUrl: 'https://via.placeholder.com/400x300/FF00FF/FFFFFF?text=Item5', title: 'Item 5'),

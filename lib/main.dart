@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:sport_camera/pages/clip_page.dart';
 import 'package:sport_camera/pages/home/edit_page.dart';
+import 'package:sport_camera/pages/home/mine_page.dart';
 import 'package:sport_camera/widget/common_popup_template.dart';
 import 'package:sport_camera/widget/red_point.dart';
 import 'pages/home/home_page.dart';
@@ -48,7 +49,7 @@ class _MainTabPageState extends State<MainTabPage> {
     ),
     ClipPage(), // 相机
     const EditPage(), // 剪辑
-    const Placeholder(), // 我的
+     ProfilePage(), // 我的
   ];
 
   @override
