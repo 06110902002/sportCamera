@@ -172,9 +172,6 @@ class NotifyingBouncingScrollPhysics extends BouncingScrollPhysics {
     final ScrollDirection direction = isOverscrollTop
         ? ScrollDirection.up
         : ScrollDirection.down;
-    print(
-      "172-------------isOverscrollTop = $isOverscrollTop  isOverscrollBottom = $isOverscrollBottom",
-    );
 
     final bool isBounce = isOverscrollTop || isOverscrollBottom;
 
@@ -248,27 +245,27 @@ class _NotifierSimulation extends Simulation {
 
 class PullToRefreshListView extends StatefulWidget {
   ///下拉加载任务通常是异常执行
-  FutureOr Function()? onRefresh;
+  final FutureOr Function()? onRefresh;
 
   /// 下拉刷新的头部视图，由外部自定义，可空。当没有时不创建这个视图
-  Widget? headView;
+  final Widget? headView;
 
   /// 是否开始的时候就刷新
-  bool isOnStartRefresh = false;
+  final bool isOnStartRefresh;
 
   ///达到开始刷新的阈值，默认100，设置时这个值尽量大于headView的高度
-  double? refreshThreshold;
+  final double? refreshThreshold;
 
   ///滚动列表视图
-  ListView? contentView;
+  final ListView? contentView;
 
   static ScrollBehavior Function(ScrollPhysics? physics)
-  defaultScrollBehaviorBuilder = _defaultScrollBehaviorBuilder;
+      defaultScrollBehaviorBuilder = _defaultScrollBehaviorBuilder;
 
   static ScrollBehavior _defaultScrollBehaviorBuilder(ScrollPhysics? physics) =>
       ScrollViewBehavior(physics);
 
-  PullToRefreshListView({
+  const PullToRefreshListView({
     super.key,
     this.onRefresh,
     this.isOnStartRefresh = false,
@@ -292,145 +289,114 @@ class _PullToRefreshListViewState extends State<PullToRefreshListView> {
   bool _isAnimatingClose = false;
   double _heldHeaderHeight = 0;
 
+  // A flag to indicate if the user has dragged far enough to trigger a refresh.
+  bool _canTriggerRefresh = false;
+
+  // The ID for the current refresh operation. This is key to "cancelling" old futures.
+  int _refreshOperationId = 0;
+
   @override
   void initState() {
     super.initState();
     _notifier.addListener(_handleScrollPhaseChange);
-    if (mounted && widget.isOnStartRefresh) {
-      setState(() {});
-      // 滚动日志到底部
+    if (widget.isOnStartRefresh) {
+      // Use addPostFrameCallback to ensure the widget is built before starting the refresh.
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        refreshOnStart();
+        if (mounted) {
+          _startRefresh();
+        }
       });
-    };
+    }
   }
 
   @override
   void dispose() {
     _hideHeaderTimer?.cancel();
+    // Invalidate any pending operations to prevent setState calls after dispose.
+    _refreshOperationId++;
     _notifier.removeListener(_handleScrollPhaseChange);
     _notifier.dispose();
     super.dispose();
   }
 
-  /// 一开始的时候就执行刷新
-  void refreshOnStart() {
+  void _startRefresh() {
+    // This is a new refresh operation, so we increment the ID.
+    final operationId = ++_refreshOperationId;
+
+    // Pin the header at the threshold height.
     setState(() {
       _heldHeaderHeight = widget.refreshThreshold ?? 100.0;
       _isHoldingHeader = true;
       _isAnimatingClose = false;
+      _canTriggerRefresh = false; // Reset eligibility
     });
 
-    // 执行异步任务
-    if (widget.onRefresh != null) {
-      Future.sync(widget.onRefresh!)
-          .then((_) {
-            if (!mounted) return;
-            setState(() {
-              _isHoldingHeader = false;
-              _isAnimatingClose = true;
-              print(
-                'onRefresh 成功执行完成，当前HeadView 状态 = ${statusText()}  _notifier.phase = ${_notifier.phase}',
-              );
-            });
-          })
-          .catchError((error, stackTrace) {
-            if (!mounted) return;
-            print('onRefresh 捕获错误: $error');
-            setState(() {
-              // Also close the header on error.
-              _isHoldingHeader = false;
-              _isAnimatingClose = true;
-            });
-          });
-    } else {
-      // 如果没有异步任务，添加一个定时器 让HeadView 暂留5s， 模拟刷新时HeadView暂留效果
-      _hideHeaderTimer?.cancel();
-      _hideHeaderTimer = Timer(const Duration(seconds: 5), () {
-        if (!mounted) return;
-        setState(() {
-          _isHoldingHeader = false;
-          _isAnimatingClose = true;
-        });
+    // A helper function to close the header, which checks the operation ID.
+    void closeHeader() {
+      // Only close if this is still the active operation and the widget is mounted.
+      if (!mounted || operationId != _refreshOperationId) return;
+      setState(() {
+        _isHoldingHeader = false;
+        _isAnimatingClose = true;
       });
+    }
+
+    if (widget.onRefresh != null) {
+      Future.sync(widget.onRefresh!).then((_) {
+        // IMPORTANT: This 'if' statement is the filter.
+        if (operationId == _refreshOperationId && mounted) {
+          // Only the LATEST refresh task can get inside here.
+          closeHeader();
+          print("Refresh task with ID $operationId succeeded.");
+        } else {
+          // This block is executed for outdated, "cancelled" refresh tasks.
+          print("Ignoring result from outdated refresh task with ID $operationId (current is $_refreshOperationId).");
+        }
+      }).catchError((error, stackTrace) {
+        // Also check for validity on error.
+        if (operationId == _refreshOperationId && mounted) {
+          print('onRefresh 捕获错误: $error');
+          closeHeader();
+        }
+      });
+    } else {
+      _hideHeaderTimer?.cancel();
+      _hideHeaderTimer = Timer(const Duration(seconds: 5), closeHeader);
     }
   }
 
   void _handleScrollPhaseChange() {
-    if (_isHoldingHeader || !mounted) {
-      print(
-        "正在执行刷新，无需要重复..._heldHeaderHeight = $_heldHeaderHeight  状态 = ${statusText()}",
-      );
-
-      return;
-    }
     final refreshThreshold = widget.refreshThreshold ?? 100.0;
 
-    bool canTriggerRefresh =
-        _notifier.phase == ScrollPhase.ballisticUp &&
-        _previousPhase == ScrollPhase.dragging &&
-        !_isHoldingHeader &&
-        _notifier.position.abs() > refreshThreshold;
-    // print(
-    //   "252-----------canTriggerRefresh = $canTriggerRefresh  _heldHeaderHeight = $_heldHeaderHeight  状态 = ${statusText()}'",
-    // );
-    if (canTriggerRefresh) {
-      // Update the UI to show the "refreshing" state.
-      setState(() {
-        _heldHeaderHeight = -_notifier.position;
-        if (_heldHeaderHeight > refreshThreshold) {
-          _heldHeaderHeight = refreshThreshold;
-        }
-        _isHoldingHeader = true;
-        _isAnimatingClose = false;
-      });
-
-      // 执行异步任务
-      if (widget.onRefresh != null) {
-        Future.sync(widget.onRefresh!)
-            .then((_) {
-              if (!mounted) return;
-              setState(() {
-                _isHoldingHeader = false;
-                _isAnimatingClose = true;
-                print(
-                  'onRefresh 成功执行完成，当前HeadView 状态 = ${statusText()}  _notifier.phase = ${_notifier.phase}',
-                );
-              });
-            })
-            .catchError((error, stackTrace) {
-              if (!mounted) return;
-              print('onRefresh 捕获错误: $error');
-              setState(() {
-                // Also close the header on error.
-                _isHoldingHeader = false;
-                _isAnimatingClose = true;
-              });
-            });
-      } else {
-        // 如果没有异步任务，添加一个定时器 让HeadView 暂留5s， 模拟刷新时HeadView暂留效果
-        _hideHeaderTimer?.cancel();
-        _hideHeaderTimer = Timer(const Duration(seconds: 5), () {
-          if (!mounted) return;
-          setState(() {
-            _isHoldingHeader = false;
-            _isAnimatingClose = true;
-          });
-        });
-      }
-    }
-
-    // If user starts dragging again while refreshing/closing, cancel the process.
+    // --- Part 1: Handle User Dragging ---
     if (_notifier.phase == ScrollPhase.dragging) {
+      // If user starts dragging while a refresh is in progress, we cancel the old one.
       if (_isHoldingHeader || _isAnimatingClose) {
+        // By incrementing the ID, we "orphan" the previous Future. Its .then() will not run.
+        _refreshOperationId++;
         _hideHeaderTimer?.cancel();
+        // Reset the state to allow the header to follow the user's finger again.
         setState(() {
           _isHoldingHeader = false;
           _isAnimatingClose = false;
         });
       }
+      // Check if the user has dragged far enough to be eligible for a refresh.
+      _canTriggerRefresh = -_notifier.position >= refreshThreshold;
     }
 
+    // --- Part 2: Handle User Releasing Finger ---
+    else if (_previousPhase == ScrollPhase.dragging &&
+        _notifier.phase == ScrollPhase.ballisticUp) {
+      // If the user was eligible and is not already in a refresh cycle...
+      if (_canTriggerRefresh && !_isHoldingHeader) {
+        _startRefresh();
+      }
+      // Reset the eligibility flag after the release.
+      _canTriggerRefresh = false;
+    }
+
+    // Keep track of the phase for the next frame.
     _previousPhase = _notifier.phase;
   }
 
@@ -505,27 +471,28 @@ class _PullToRefreshListViewState extends State<PullToRefreshListView> {
           builder: (context, child) {
             double headViewHeight;
 
+            // If we are in the "holding" phase (during refresh), pin the height.
             if (_isHoldingHeader) {
               headViewHeight = _heldHeaderHeight;
-            } else if (_isAnimatingClose) {
-              // Target for the closing animation
+            } 
+            // If we are animating the close, the target height is 0.
+            else if (_isAnimatingClose) {
               headViewHeight = 0;
-            } else {
-              // Normal drag behavior
+            } 
+            // Otherwise, the header height should follow the user's finger.
+            else {
               final scrollValue = _notifier.position;
-              headViewHeight = 0;
-              if (scrollValue < 0) {
-                headViewHeight = -scrollValue;
-              }
-              if (headViewHeight > (widget.refreshThreshold ?? 100.0)) {
-                headViewHeight = widget.refreshThreshold ?? 100.0;
-              }
+              // The header is only visible when scrolling up beyond the top (negative position).
+              headViewHeight = scrollValue < 0 ? -scrollValue : 0;
             }
+
+            // Ensure height is never negative.
             if (headViewHeight < 0) {
               headViewHeight = 0;
             }
+
             // By using AnimatedContainer and dynamically changing the duration,
-            // we get animation only when we want it.
+            // we get animation only when we want it (when closing).
             return AnimatedContainer(
               duration: _isAnimatingClose
                   ? const Duration(milliseconds: 300) // Animate when closing
@@ -533,7 +500,7 @@ class _PullToRefreshListViewState extends State<PullToRefreshListView> {
               curve: Curves.easeOut,
               height: headViewHeight,
               onEnd: () {
-                // Reset the flag after the animation is done
+                // Reset the flag after the closing animation is done.
                 if (_isAnimatingClose) {
                   setState(() {
                     _isAnimatingClose = false;
@@ -547,14 +514,6 @@ class _PullToRefreshListViewState extends State<PullToRefreshListView> {
           },
         ),
         Expanded(
-          // child: ListView.builder(
-          //   physics: NotifyingBouncingScrollPhysics(
-          //     notifier: _notifier,
-          //     parent: const AlwaysScrollableScrollPhysics(),
-          //   ),
-          //   itemCount: 50,
-          //   itemBuilder: (_, i) => ListTile(title: Text('Item $i')),
-          // ),
           child: _buildContentListView(),
         ),
       ],

@@ -77,6 +77,8 @@ class MyApp2 extends StatefulWidget {
 
 class _MyApp2State extends State<MyApp2> {
   List<String> testDatas = ["湖南", "湖北", "山东", "山西", "河南"];
+  // Add a refresh ID counter to the parent state.
+  int _refreshId = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -88,20 +90,30 @@ class _MyApp2State extends State<MyApp2> {
         body: PullToRefreshListView(
           isOnStartRefresh: true,
             onRefresh: () async {
-              print("this is PullToRefreshListView  start");
+              // Increment the ID and capture it for this specific operation.
+              final currentRefreshId = ++_refreshId;
+              LoggerUtil.d("PullToRefreshListView start, operation ID: $currentRefreshId");
+
               await Future.delayed(const Duration(seconds: 5));
 
-              // Call setState to notify Flutter that the state has changed.
-              setState(() {
-                testDatas.clear();
-                testDatas.add("广东");
-                testDatas.add("广西");
-                testDatas.add("河北");
-                testDatas.add("海南");
-                testDatas.add("江苏");
-              });
-
-              print("this is PullToRefreshListView finished testDatas length = ${testDatas.length}");
+              // *** The Core Logic: The Filter ***
+              // Before updating the state, check if this is still the latest operation.
+              if (currentRefreshId == _refreshId) {
+                print("Operation ID $currentRefreshId is current. Updating UI.");
+                // This is the latest refresh task, so we can update the UI.
+                setState(() {
+                  testDatas.clear();
+                  testDatas.add("广东");
+                  testDatas.add("广西");
+                  testDatas.add("河北");
+                  testDatas.add("海南");
+                  testDatas.add("江苏");
+                });
+                LoggerUtil.d("PullToRefreshListView finished, testDatas length = ${testDatas.length}   operation ID: $currentRefreshId");
+              } else {
+                // This is an outdated task. Its result should be ignored.
+                LoggerUtil.d("Ignoring result from outdated operation ID $currentRefreshId (latest is $_refreshId).");
+              }
             },
             contentView:  ListView.builder(
               itemCount: testDatas.length,
