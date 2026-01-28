@@ -1,16 +1,24 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:sport_camera/pages/clip_page.dart';
 import 'package:sport_camera/pages/home/edit_page.dart';
 import 'package:sport_camera/pages/home/mine_page.dart';
+import 'package:sport_camera/pages/login_page.dart';
+import 'package:sport_camera/provider/auth_model.dart';
 import 'package:sport_camera/widget/common_popup_template.dart';
 import 'package:sport_camera/widget/red_point.dart';
 import 'pages/home/home_page.dart';
 import 'pages/album_page.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => AuthModel(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -23,7 +31,11 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: false,
       ),
-      home: const MainTabPage(),
+      home: Consumer<AuthModel>(
+        builder: (context, auth, child) {
+          return auth.isLoggedIn ? const MainTabPage() : const LoginPage();
+        },
+      ),
     );
   }
 }
@@ -107,7 +119,7 @@ class _MainTabPageState extends State<MainTabPage> {
               const BottomNavigationBarItem(icon: Icon(Icons.home), label: '首页'),
               const BottomNavigationBarItem(icon: Icon(Icons.photo_library), label: '相册'),
               // 中间项：空组件 占位用，高度=默认高度，彻底锁死导航栏高度【重中之重】
-              BottomNavigationBarItem(icon: SizedBox.shrink(), label: ''),
+              const BottomNavigationBarItem(icon: SizedBox.shrink(), label: ''),
               const BottomNavigationBarItem(icon: Icon(Icons.cut), label: '剪辑'),
               BottomNavigationBarItem(
                 icon: RedPoint(

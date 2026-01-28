@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
+import 'package:sport_camera/provider/auth_model.dart';
 
 /// Author: Rambo.Liu
 /// Date: 2026/1/19 19:24
@@ -20,7 +22,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       title: '個人主頁',
       home: ProfilePage(),
       debugShowCheckedModeBanner: false,
@@ -29,6 +31,8 @@ class MyApp extends StatelessWidget {
 }
 
 class ProfilePage extends StatefulWidget {
+  const ProfilePage({super.key});
+
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
@@ -140,6 +144,17 @@ class _ProfilePageState extends State<ProfilePage> with TickerProviderStateMixin
                       "更换背景",
                       Icons.image,
                       click: _pickAndSetBackgroundImage,
+                      color: _isAppBarCollapsed ? Colors.black : Colors.white,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 16.0),
+                    child: _buildAction(
+                      "退出登录",
+                      Icons.logout,
+                      click: () {
+                        context.read<AuthModel>().logout();
+                      },
                       color: _isAppBarCollapsed ? Colors.black : Colors.white,
                     ),
                   )

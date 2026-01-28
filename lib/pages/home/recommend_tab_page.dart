@@ -4,30 +4,70 @@
 /// Description: TODO
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:sport_camera/pages/base_page.dart';
 import 'package:sport_camera/pages/home/recommend_detail.dart';
 
+import '../../provider/auth_model.dart';
+import '../login_fail.dart';
 import 'home_page.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
-class RecommendTabPage extends StatelessWidget {
+class RecommendTabPage extends BasePage<AuthModel> {
   final String category;
 
   const RecommendTabPage({super.key, required this.category});
 
+  // @override
+  // Widget build(BuildContext context) {
+  //   return Consumer<AuthModel>(builder: (context, auth, child) {
+  //       if(auth.isLoggedIn) {
+  //         return MasonryGridView.count(
+  //           padding: const EdgeInsets.all(12),
+  //           crossAxisCount: 2,
+  //           mainAxisSpacing: 12,
+  //           crossAxisSpacing: 12,
+  //           itemCount: 20,
+  //           itemBuilder: (context, index) {
+  //             return _buildItem(context, index);
+  //           },
+  //         );
+  //       } else {
+  //         return  Center(
+  //           child: Column(
+  //             mainAxisAlignment: MainAxisAlignment.center,
+  //             children: [
+  //               const Text('登录失败，请重试'),
+  //               const SizedBox(height: 20),
+  //               ElevatedButton(
+  //                 onPressed: () {
+  //                   // Go back to the login page
+  //                   Navigator.pop(context);
+  //                 },
+  //                 child: const Text('重试'),
+  //               ),
+  //             ],
+  //           ),
+  //         );
+  //       }
+  //   },);
+  //
+  //
+  //
+  // }
+
   @override
-  Widget build(BuildContext context) {
-    return MasonryGridView.count(
-      padding: const EdgeInsets.all(12),
-      crossAxisCount: 2,
-      mainAxisSpacing: 12,
-      crossAxisSpacing: 12,
-      itemCount: 20,
-      itemBuilder: (context, index) {
-        return _buildItem(context, index);
-      },
-    );
+  RecommendTabPageState createState() => RecommendTabPageState();
+
+}
+
+class RecommendTabPageState extends BasePageState<RecommendTabPage, AuthModel> {
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
   }
 
   Widget _buildItem(BuildContext context, int index) {
@@ -35,7 +75,7 @@ class RecommendTabPage extends StatelessWidget {
 
     return InkWell(
       onTap: () {
-        debugPrint('点击 $category - $index');
+        debugPrint('点击 ${widget.category} - $index');
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const RecommendDetail()),
@@ -66,7 +106,7 @@ class RecommendTabPage extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(8),
               child: Text(
-                '$category 内容标题 $index',
+                '${widget.category} 内容标题 $index',
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
@@ -79,5 +119,23 @@ class RecommendTabPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  @override
+  Widget buildContent(BuildContext context) {
+    if(model.isLoggedIn) {
+      return MasonryGridView.count(
+        padding: const EdgeInsets.all(12),
+        crossAxisCount: 2,
+        mainAxisSpacing: 12,
+        crossAxisSpacing: 12,
+        itemCount: 20,
+        itemBuilder: (context, index) {
+          return _buildItem(context, index);
+        },
+      );
+    } else {
+      return LoginFailPage();
+    }
   }
 }
