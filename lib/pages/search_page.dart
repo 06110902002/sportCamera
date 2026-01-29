@@ -3,6 +3,7 @@
 /// @Copyright by JYXC Since 2023
 /// Description: 搜索页面
 import 'package:flutter/material.dart';
+import 'package:sport_camera/widget/text_high_light.dart';
 
 // void main() {
 //   runApp(const MyApp());
@@ -134,7 +135,11 @@ class _SearchPageState extends State<SearchPage> {
             if (_controller.text.isNotEmpty)
               ...searchResult.map(
                     (item) => ListTile(
-                  title: Text(item),
+                  title: TextHighlight(
+                      item,
+                      _controller.text,
+                      TextStyle(color: Colors.black, fontSize: 16),
+                      TextStyle(color: Colors.red, fontSize: 16)),
                   onTap: () {
                     debugPrint('搜索点击: $item');
                     _addToHistory(item);
