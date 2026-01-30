@@ -90,6 +90,8 @@ class _TutorialPageState extends State<TutorialPage>
     ),
   ];
   late int coreCurSelectIdx;
+  final ValueNotifier<int> _coreCurSelectIdx = ValueNotifier<int>(0);
+
 
   @override
   void initState() {
@@ -106,13 +108,15 @@ class _TutorialPageState extends State<TutorialPage>
       vsync: this,
       initialIndex: 0,
     );
-    coreCurSelectIdx = _coreTabController.index;
+    //coreCurSelectIdx = _coreTabController.index;
     _coreTabController.addListener(() {
-      coreCurSelectIdx = _coreTabController.index;
-      print("116-----------index = $coreCurSelectIdx");
-      if (!_coreTabController.indexIsChanging) {
-        setState(() {});
-      }
+      // coreCurSelectIdx = _coreTabController.index;
+      // print("116-----------index = $coreCurSelectIdx");
+      // if (!_coreTabController.indexIsChanging) {
+      //   setState(() {});
+      // }
+      _coreCurSelectIdx.value = _coreTabController.index;
+
     });
   }
 
@@ -122,6 +126,7 @@ class _TutorialPageState extends State<TutorialPage>
     _searchController.dispose(); // Dispose the controller
     _basicTabController.dispose();
     _coreTabController.dispose();
+    _coreCurSelectIdx.dispose();
     super.dispose();
   }
 
@@ -353,9 +358,9 @@ class _TutorialPageState extends State<TutorialPage>
 
   ///构建核心操作手册
   Widget _buildCoreSection() {
-    final currentList = coreCurSelectIdx == 0 ? _feedList : _editFeedList;
-    int grid_rows = (currentList.length / 2).ceil();
-    double sigle_row_h = 154.0;
+    // final currentList = coreCurSelectIdx == 0 ? _feedList : _editFeedList;
+    // int grid_rows = (currentList.length / 2).ceil();
+    // double sigle_row_h = 154.0;
     return NotificationListener<OverscrollNotification>(
       onNotification: _careTabHandleOverscroll,
       child: Column(
@@ -377,11 +382,18 @@ class _TutorialPageState extends State<TutorialPage>
             ),
           ),
           _buildCoreTabBar(context),
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 300),
-            //动态设置grid 的高度，达到自适应，外层添加动画，感受高度变化的过程
-            height: sigle_row_h * grid_rows,
-            //tabbarView 不会透传父布局约束
+          ValueListenableBuilder<int>(
+            valueListenable: _coreCurSelectIdx,
+            builder: (context, value, child) {
+              final currentList = value == 0 ? _feedList : _editFeedList;
+              int grid_rows = (currentList.length / 2).ceil();
+              double sigle_row_h = 154.0;
+              return AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                height: sigle_row_h * grid_rows,
+                child: child, // 直接使用 child，避免 TabBarView 重建
+              );
+            },
             child: TabBarView(
               controller: _coreTabController,
               children: [
@@ -390,6 +402,23 @@ class _TutorialPageState extends State<TutorialPage>
               ],
             ),
           ),
+
+
+          //未优化之前  通过监听Tabbar 切换来获取当前TabBarView 内容高度，这个方案需要setState ，会将整个组件重绘
+          // 优化之后使用 ValueListenableBuilder，来局部刷新
+          // AnimatedContainer(
+          //   duration: const Duration(milliseconds: 300),
+          //   //动态设置grid 的高度，达到自适应，外层添加动画，感受高度变化的过程
+          //   height: sigle_row_h * grid_rows,
+          //   //tabbarView 不会透传父布局约束
+          //   child: TabBarView(
+          //     controller: _coreTabController,
+          //     children: [
+          //       _buildCoreContent(_feedList),
+          //       _buildCoreContent(_editFeedList),
+          //     ],
+          //   ),
+          // ),
         ],
       ),
     );
@@ -703,9 +732,10 @@ class _TutorialBannerState extends State<TutorialBanner> {
   Timer? _timer;
 
   static const int _realCount = 3;
-  static const int _initialPage = 1000;
+  static const int _initialPage = 0;
 
-  int _currentIndex = 0;
+  //int _currentIndex = 0;
+  ValueNotifier<int> _currentIndex = ValueNotifier<int>(0);
   bool _isDragging = false;
 
   @override
@@ -764,9 +794,11 @@ class _TutorialBannerState extends State<TutorialBanner> {
             child: PageView.builder(
               controller: _pageController,
               onPageChanged: (page) {
-                setState(() {
-                  _currentIndex = _mapIndex(page);
-                });
+                // setState(() {
+                //   _currentIndex = _mapIndex(page);
+                // });
+                // 优化点: 更新 ValueNotifier 的值，不调用 setState
+                _currentIndex.value = _mapIndex(page);
               },
               itemBuilder: (context, page) {
                 final index = _mapIndex(page);
@@ -775,26 +807,33 @@ class _TutorialBannerState extends State<TutorialBanner> {
             ),
           ),
 
-          // 指示点
+          // 指示点            优化点: 使用 ValueListenableBuilder 包裹指示点
           Positioned(
             bottom: 12,
-            child: Row(
-              children: List.generate(_realCount, (i) {
-                final active = i == _currentIndex;
-                return AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  margin: const EdgeInsets.symmetric(horizontal: 4),
-                  width: active ? 12 : 6,
-                  height: 6,
-                  decoration: BoxDecoration(
-                    color: active
-                        ? Colors.black
-                        : Colors.black.withOpacity(0.3),
-                    borderRadius: BorderRadius.circular(3),
-                  ),
-                );
-              }),
-            ),
+            child: ValueListenableBuilder<int>(
+            valueListenable: _currentIndex,
+            builder: (context, value, child) {
+               return Row(
+                 children: List.generate(_realCount, (i) {
+                   final active = i == value;
+                   return AnimatedContainer(
+                     duration: const Duration(milliseconds: 200),
+                     margin: const EdgeInsets.symmetric(horizontal: 4),
+                     width: active ? 12 : 6,
+                     height: 6,
+                     decoration: BoxDecoration(
+                       color: active
+                           ? Colors.black
+                           : Colors.black.withOpacity(0.3),
+                       borderRadius: BorderRadius.circular(3),
+                     ),
+                   );
+                 }),
+               );
+            },
+    )
+
+
           ),
         ],
       ),
@@ -805,6 +844,7 @@ class _TutorialBannerState extends State<TutorialBanner> {
   void dispose() {
     _stopAuto();
     _pageController.dispose();
+    _currentIndex.dispose();
     super.dispose();
   }
 }

@@ -5,16 +5,16 @@ import 'package:sport_camera/pages/base_page.dart';
 import 'package:sport_camera/pages/login_fail.dart';
 import 'package:sport_camera/provider/auth_model.dart';
 import 'package:sport_camera/utils/logger_util.dart';
-
+import 'package:sport_camera/widget/verification_code_button.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-      return MaterialApp(
-        title: 'Insta360 登录',
-        theme: ThemeData(
+    return MaterialApp(
+      title: 'Insta360 登录',
+      theme: ThemeData(
         useMaterial3: false, // 或 true，保持统一
         primarySwatch: Colors.blue,
         primaryColor: Colors.blue, // 主要颜色
@@ -25,10 +25,10 @@ class LoginPage extends StatelessWidget {
           elevation: 4, // 阴影高度
         ),
       ),
-        // 关键：使用在 base_page.dart 中定义的全局 routeObserver
-        navigatorObservers: [routeObserver],
-        home:  const LoginScreen(),
-      );
+      // 关键：使用在 base_page.dart 中定义的全局 routeObserver
+      navigatorObservers: [routeObserver],
+      home: const LoginScreen(),
+    );
   }
 }
 
@@ -48,11 +48,6 @@ class _LoginScreenState extends BasePageState<LoginScreen, AuthModel> {
   bool _isAgreed = false;
   bool _isLoading = false;
 
-  // Countdown timer variables
-  bool _isCountingDown = false;
-  int _countdown = 60;
-  Timer? _timer;
-
   @override
   void initState() {
     super.initState();
@@ -64,7 +59,6 @@ class _LoginScreenState extends BasePageState<LoginScreen, AuthModel> {
   void dispose() {
     _phoneNumberController.dispose();
     _verifyCodeController.dispose();
-    _timer?.cancel();
     super.dispose();
   }
 
@@ -72,12 +66,6 @@ class _LoginScreenState extends BasePageState<LoginScreen, AuthModel> {
   @override
   void onDidPushNext() {
     LoggerUtil.d("LoginPage: Navigated to another page.");
-    // 页面不可见时，取消定时器并重置状态
-    if (_timer?.isActive ?? false) {
-      _timer!.cancel();
-      _isCountingDown = false;
-      _countdown = 60;
-    }
   }
 
   @override
@@ -93,11 +81,15 @@ class _LoginScreenState extends BasePageState<LoginScreen, AuthModel> {
 
   void _onLoginTap() async {
     if (_canLogin) {
-      setState(() { _isLoading = true; });
+      setState(() {
+        _isLoading = true;
+      });
       // 直接使用基类提供的 `model`
       final success = await model.login();
       if (!mounted) return;
-      setState(() { _isLoading = false; });
+      setState(() {
+        _isLoading = false;
+      });
       if (!success) {
         Navigator.push(
           context,
@@ -107,25 +99,13 @@ class _LoginScreenState extends BasePageState<LoginScreen, AuthModel> {
     }
   }
 
-  void _startCountdown() {
-    _isCountingDown = true;
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (!mounted) {
-          timer.cancel();
-          return;
-      }
-      setState(() {
-        if (_countdown > 1) {
-          _countdown--;
-        } else {
-          _isCountingDown = false;
-          _countdown = 60;
-          _timer?.cancel();
-        }
-      });
-    });
+  void _sendVerificationCode() {
+    // Here you can add the logic to actually send a verification code.
+    // For now, we just show a snackbar.
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(content: Text('验证码已发送')));
   }
-  
+
   // 4. 实现 buildContent 方法来构建UI
   @override
   Widget buildContent(BuildContext context) {
@@ -158,7 +138,6 @@ class _LoginScreenState extends BasePageState<LoginScreen, AuthModel> {
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 40),
-
             TextField(
               controller: _phoneNumberController,
               decoration: InputDecoration(
@@ -177,7 +156,6 @@ class _LoginScreenState extends BasePageState<LoginScreen, AuthModel> {
               keyboardType: TextInputType.phone,
             ),
             const SizedBox(height: 16),
-
             Container(
               decoration: BoxDecoration(
                 color: Colors.grey[100],
@@ -202,27 +180,13 @@ class _LoginScreenState extends BasePageState<LoginScreen, AuthModel> {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  SizedBox(
-                    width: 110,
-                    child: TextButton(
-                      onPressed: _isCountingDown
-                          ? null
-                          : () {
-                              ScaffoldMessenger.of(
-                                context,
-                              ).showSnackBar(const SnackBar(content: Text('验证码已发送')));
-                              _startCountdown();
-                            },
-                      child: Text(
-                        _isCountingDown ? '重新发送($_countdown)' : '发送验证码',
-                      ),
-                    ),
+                  VerificationCodeButton(
+                    onSendCode: _sendVerificationCode,
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 24),
-
             SizedBox(
               width: double.infinity,
               height: 50,
@@ -243,7 +207,6 @@ class _LoginScreenState extends BasePageState<LoginScreen, AuthModel> {
               ),
             ),
             const SizedBox(height: 16),
-
             Center(
               child: Text(
                 '未注册的手机号/邮箱将自动注册',
@@ -251,7 +214,6 @@ class _LoginScreenState extends BasePageState<LoginScreen, AuthModel> {
               ),
             ),
             const SizedBox(height: 24),
-
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -267,7 +229,6 @@ class _LoginScreenState extends BasePageState<LoginScreen, AuthModel> {
               ],
             ),
             const SizedBox(height: 16),
-            
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -319,7 +280,6 @@ class _LoginScreenState extends BasePageState<LoginScreen, AuthModel> {
               ],
             ),
             const SizedBox(height: 24),
-
             Center(
               child: Text('还没有账号？', style: TextStyle(color: Colors.grey[500])),
             ),
@@ -335,7 +295,6 @@ class _LoginScreenState extends BasePageState<LoginScreen, AuthModel> {
               ),
             ),
             const SizedBox(height: 100),
-
             Row(
               children: [
                 Transform.scale(
